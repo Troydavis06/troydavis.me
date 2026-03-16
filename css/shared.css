@@ -133,6 +133,33 @@ main {
     flex-grow: 1;
 }
 
+/* Music link section (used on multiple pages) */
+.music-link-section {
+    padding: 0.6rem 1.2rem 1.4rem;
+    background-color: #FDF6E3;
+}
+
+.music-link-container {
+    max-width: 720px;
+    margin: 0.5rem auto 0;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.music-link-subtle {
+    font-size: clamp(0.8rem, 1.2vw, 0.95rem);
+    color: #555;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.music-link-subtle:hover {
+    color: #222;
+}
+
 /* Footer */
 footer {
     text-align: center;
