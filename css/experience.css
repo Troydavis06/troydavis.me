@@ -31,8 +31,8 @@
 
 .experience-logo {
     flex-shrink: 0;
-    width: 76px;
-    height: 76px;
+    width: 84px;
+    height: 84px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -40,8 +40,8 @@
 }
 
 .experience-logo img {
-    max-width: 45px;
-    max-height: 45px;
+    max-width: 52px;
+    max-height: 52px;
     object-fit: contain;
 }
 
