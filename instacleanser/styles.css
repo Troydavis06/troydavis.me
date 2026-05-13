@@ -235,7 +235,17 @@ button.btn:disabled {
   color: #e9d5ff;
 }
 
-/* Primary CTA when Chrome Web Store URL is wired: use <a class="btn btn-primary"> */
+.install-store-lead {
+  margin: 0;
+  color: var(--muted);
+  max-width: 42em;
+  line-height: 1.55;
+}
+
+.install-store-lead a {
+  color: var(--link);
+  font-weight: 600;
+}
 
 .section {
   padding: 2rem 0;
