@@ -89,10 +89,15 @@
     .education-item {
         flex-direction: column;
         gap: 0.8rem;
+        align-items: center;
     }
 
     .education-logo {
         max-width: 70px;
+    }
+
+    .education-details {
+        text-align: center;
     }
 
     .education-details h3 {
@@ -109,6 +114,11 @@
 
     .education-details li {
         font-size: 1rem;
+        text-align: left;
+    }
+
+    .education-details ul {
+        text-align: left;
     }
 }
 

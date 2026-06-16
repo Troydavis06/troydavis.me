@@ -376,7 +376,21 @@ button.btn:disabled {
 
 @media (min-width: 48rem) {
   .figure-card__media {
-    min-height: clamp(280px, 48vh, 520px);
+    min-height: 0;
+    aspect-ratio: 3 / 4;
+    max-height: 520px;
+  }
+}
+
+@media (max-width: 30rem) {
+  .figure-card__media {
+    min-height: 0;
+    padding: 1rem 0.65rem;
+  }
+
+  .figure-card__media img {
+    width: 100%;
+    max-height: none;
   }
 }
 
