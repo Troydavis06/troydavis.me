@@ -1,188 +1,232 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Troy Davis - Portfolio</title>
-    <link rel="icon" href="assets/td-favicon.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="css/shared.css">
-    <link rel="stylesheet" href="css/about.css">
-    <link rel="stylesheet" href="css/experience.css">
-    <link rel="stylesheet" href="css/education.css">
-    <link rel="stylesheet" href="css/projects.css">
-    <!-- Google Fonts link -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet">
-    <!-- Font Awesome for social icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Troy Davis</title>
+  <link rel="icon" href="assets/td-favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
-    <header>
-        <div class="header-content">
-            <h1>Troy Davis</h1>
-            <div class="header-subtext">
-                <p class="portfolio-label">portfolio</p>
-                <p class="role">cs @ UT Austin</p>
-            </div>
+
+  <!-- NAV -->
+  <nav id="main-nav">
+    <a href="#" class="brand">
+      <span class="brand-dot">•</span>troy
+    </a>
+    <div class="nav-links">
+      <a href="#about">about</a>
+      <a href="#work">work</a>
+      <a href="#experience">experience</a>
+      <!-- <a href="#writing">writing</a> -->
+      <a href="#contact">contact</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-text">
+      <p class="hero-label">cs + math @ ut austin</p>
+      <h1>Hi, I'm Troy.<br>I have fun building.</h1>
+      <p class="hero-sub">CS + math student at UT Austin, working on systems, tooling, and things with real users.</p>
+      <div class="hero-cta">
+        <a href="#work" class="btn-primary">view work</a>
+        <a href="resume.html" class="btn-secondary">résumé</a>
+      </div>
+    </div>
+    <div id="sphere-canvas"></div>
+  </section>
+
+  <!-- WORK -->
+  <div class="section-wrap" id="work">
+    <div class="section-inner">
+      <div class="section-header">
+        <span class="section-label">selected work</span>
+        <a href="#work" class="section-link">all projects →</a>
+      </div>
+      <div class="work-grid">
+
+        <div class="work-card">
+          <p class="card-tags">agents &middot; multi-tool</p>
+          <h3 class="card-title">CLARA</h3>
+          <p class="card-desc">A multi-agent system built for Hook&rsquo;em Hacks 2026. Aggregates output from multiple code analysis scanners into prioritized, developer-ready findings with remediation insights.</p>
+          <div class="card-links">
+            <a href="https://claragot.us/" target="_blank" rel="noopener noreferrer" class="card-link"><i class="fas fa-globe"></i> website</a>
+            <a href="https://github.com/Troydavis06/CLARA" target="_blank" rel="noopener noreferrer" class="card-link"><i class="fab fa-github"></i> github</a>
+          </div>
         </div>
-    </header>
 
-    <main>
-        <!-- Intro / Name -->
-        <section class="about-section" id="about">
-            <div class="about-container">
-                <div class="about-text">
-                    <p>I'm Troy Davis, a Computer Science student at the University of Texas at Austin, interested in software engineering, machine learning, and security.</p>
-                    <p>I'm drawn to projects that make me think creatively and ship practical things. When I'm not coding, I'm usually playing basketball or disc golf, spending time with friends and family, or driving back home to Cypress, Texas.</p>
-
-                    <div class="social-links">
-                        <h3>Connect With Me</h3>
-                        <div class="social-icons">
-                            <a href="https://github.com/troydavis06" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
-                            <a href="https://linkedin.com/in/troydavis06" target="_blank" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
-                            <a href="https://instagram.com/troydavis0" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
-                            <a href="mailto:troydaviscs@gmail.com" title="Email"><i class="fas fa-envelope"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Experience -->
-        <section class="experience-section" id="experience">
-            <div class="experience-container">
-                <h2>Experience</h2>
-
-                <div class="experience-item">
-                    <div class="experience-logo">
-                        <img src="assets/companies/hpe.png" alt="Hewlett Packard Enterprise Logo">
-                    </div>
-                    <div class="experience-content">
-                        <h3>Hewlett Packard Enterprise</h3>
-                        <p class="company">Software Engineer Intern &mdash; May 2026 &ndash; Aug 2026</p>
-                        <p class="description">Incomming S26</p>
-                    </div>
-                </div>
-
-                <div class="experience-item">
-                    <div class="experience-logo">
-                        <img src="assets/companies/hpe.png" alt="Hewlett Packard Enterprise Logo">
-                    </div>
-                    <div class="experience-content">
-                        <h3>Hewlett Packard Enterprise</h3>
-                        <p class="company">Software Engineer Intern &mdash; May 2025 &ndash; Aug 2025</p>
-                        <p class="description">Worked on security and compliance tooling, automating security control mapping and generating machine learning-oriented security control group descriptions.</p>
-                    </div>
-                </div>
-
-                <div class="experience-item">
-                    <div class="experience-logo">
-                        <img src="assets/companies/infinitaz.png" alt="Infinitaz Logo">
-                    </div>
-                    <div class="experience-content">
-                        <h3>Infinitaz</h3>
-                        <p class="company">Software Engineer Intern &mdash; Dec 2024 &ndash; May 2025</p>
-                        <p class="description">Built .NET services that integrated Azure OpenAI and local models, and automated analytics workflows across distributed virtual machines.</p>
-                    </div>
-                </div>
-
-                <div class="experience-item">
-                    <div class="experience-logo">
-                        <img src="assets/companies/utd.png" alt="UT Dallas Logo">
-                    </div>
-                    <div class="experience-content">
-                        <h3>The University of Texas at Dallas</h3>
-                        <p class="company">Undergraduate Researcher &mdash; Jun 2024 &ndash; Aug 2024</p>
-                        <p class="description">Researched deep learning for code security, including RNN-based detection of malicious repositories and adversarial attacks on vulnerability detection models.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Projects -->
-        <section class="projects-section" id="projects">
-            <div class="projects-container">
-                <h2>Projects</h2>
-
-                <div class="project-item">
-                    <img class="project-image project-image-clara" src="assets/CLARA/postscan.png" alt="CLARA post-scan dashboard">
-                    <h3>CLARA</h3>
-                    <p class="description">CLARA (Contextual Layered Agent for Risk and Remediation Analysis), built for Hook'em Hacks 2026, transforms noisy SAST, DAST, and OSS scanner output into prioritized, developer-ready attack chains with MITRE ATT&amp;CK mapping and remediation insights.</p>
-                    <p class="github-link">
-                        <a href="https://claragot.us/" target="_blank" rel="noopener noreferrer"><i class="fas fa-globe" aria-hidden="true"></i>Check out the website!</a>
-                        <span aria-hidden="true"> · </span>
-                        <a href="https://github.com/Troydavis06/CLARA" target="_blank" rel="noopener noreferrer">
-                            <i class="fab fa-github"></i>View on GitHub
-                        </a>
-                    </p>
-                </div>
-
-                <div class="project-item">
-                    <div class="project-image-row">
-                        <img class="project-image project-image-half" src="assets/instacleanser/icMain.png" alt="InstaCleanser followers and following view">
-                        <img class="project-image project-image-half project-image-nfb" src="assets/instacleanser/icNFB.png" alt="InstaCleanser don't follow back tab with unfollow actions">
-                    </div>
-                    <h3>InstaCleanser</h3>
-                    <p class="description">InstaCleanser is a browser extension that analyzes Instagram followers and following in-session, identifies accounts that do not follow you back, and enables safe one-by-one or bulk unfollow workflows directly from your own profile.</p>
-                    <p class="github-link">
-                        <a href="https://troydavis.me/instacleanser/" target="_blank" rel="noopener noreferrer"><i class="fas fa-globe" aria-hidden="true"></i>Check out the website and download now!</a>
-                        <span aria-hidden="true"> · </span>
-                        <a href="https://github.com/Troydavis06/InstaCleanser" target="_blank" rel="noopener noreferrer">
-                            <i class="fab fa-github"></i>View on GitHub
-                        </a>
-                    </p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Education -->
-        <section class="education-section" id="education">
-            <div class="education-container">
-                <h2>Education</h2>
-
-                <div class="education-item">
-                    <div class="education-logo">
-                        <img src="assets/education/utlogo.png" alt="UT Austin Logo">
-                    </div>
-                    <div class="education-details">
-                        <h3>University of Texas at Austin</h3>
-                        <p class="degree">B.S. Computer Science</p>
-                        <p class="duration">Austin, Texas</p>
-                        <ul>
-                            <li>Relevant coursework: Data Structures, Computer Architecture, Probability and Statistics, Linear Algebra, Multivariable Calculus, Discrete Math</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="education-item">
-                    <div class="education-logo">
-                        <img src="assets/education/cywoodslogo.png" alt="Cypress High School Logo">
-                    </div>
-                    <div class="education-details">
-                        <h3>Cypress High School</h3>
-                        <p class="degree">High School Diploma</p>
-                        <p class="duration">Cypress, Texas</p>
-                        <ul>
-                            <li>Rank: 5/784</li>
-                            <li>Cofounder and President of Instruction of Computer Science Outreach Program</li>
-                            <li>VP of Computer Science Club</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <section class="music-link-section">
-        <div class="music-link-container">
-            <a href="albums.html" class="music-link-subtle">I like music, here’s some of my rankings</a>
+        <div class="work-card">
+          <p class="card-tags">web &middot; shipped</p>
+          <h3 class="card-title">InstaCleanser</h3>
+          <p class="card-desc">A browser extension that analyzes Instagram follower/following data in-session, identifies non-followers, and enables safe one-by-one or bulk unfollow workflows — directly from your profile.</p>
+          <div class="card-links">
+            <a href="https://troydavis.me/instacleanser/" target="_blank" rel="noopener noreferrer" class="card-link"><i class="fas fa-globe"></i> website</a>
+            <a href="https://github.com/Troydavis06/InstaCleanser" target="_blank" rel="noopener noreferrer" class="card-link"><i class="fab fa-github"></i> github</a>
+          </div>
         </div>
-    </section>
 
-    <footer>
-        <p>© 2025 Troy Davis</p>
-    </footer>
+        <div class="work-card work-card--muted">
+          <p class="card-tags">more &middot; soon</p>
+          <h3 class="card-title">More coming</h3>
+          <p class="card-desc">Building more things. Check back soon.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <div class="section-wrap" id="about">
+    <div class="section-inner">
+      <div class="section-header">
+        <span class="section-label">about</span>
+      </div>
+      <div class="about-grid">
+        <div class="about-bio">
+          <p class="lead">I'm a CS + math student at UT Austin who likes building things that sit close to the metal — systems, tooling, and the occasional thing with real users.</p>
+          <p>Right now I'm interning at HPE and building tools I'd actually want to use. When I'm not coding, I'm usually playing basketball or disc golf, spending time with friends and family, or driving back home to Cypress, Texas.</p>
+        </div>
+        <div class="skills-box">
+          <p class="skills-box-label">currently working with</p>
+          <div class="skills-tags">
+            <span class="skill-tag">Agentic workflows</span>
+            <span class="skill-tag">Vulnerability detection &amp; remediation</span>
+            <span class="skill-tag">C++</span>
+            <span class="skill-tag">C</span>
+            <span class="skill-tag">Business development</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXPERIENCE -->
+  <div class="section-wrap" id="experience">
+    <div class="section-inner">
+      <div class="section-header">
+        <span class="section-label">experience</span>
+      </div>
+      <div class="exp-list">
+
+        <div class="exp-item">
+          <div class="exp-dot active"></div>
+          <div class="exp-body">
+            <div class="exp-header">
+              <span class="exp-title">Software Engineer Intern &middot; Hewlett Packard Enterprise</span>
+              <span class="exp-year">Summer 2026</span>
+            </div>
+            <p class="exp-desc">Building agentic workflow for vulnerability detection and remediation.</p>
+          </div>
+        </div>
+
+        <div class="exp-item">
+          <div class="exp-dot active"></div>
+          <div class="exp-body">
+            <div class="exp-header">
+              <span class="exp-title">Competitive Programming Exam Author &middot; A+ Computer Science</span>
+              <span class="exp-year">Summer 2026</span>
+            </div>
+            <p class="exp-desc">Writing UIL style programming and written exams.</p>
+          </div>
+        </div>
+
+        <div class="exp-item">
+          <div class="exp-dot"></div>
+          <div class="exp-body">
+            <div class="exp-header">
+              <span class="exp-title">Software Engineer Intern &middot; Hewlett Packard Enterprise</span>
+              <span class="exp-year">Summer 2025</span>
+            </div>
+            <p class="exp-desc">Built tooling to automate compliance workflow analysis and generate ML-based control group descriptions at scale.</p>
+          </div>
+        </div>
+
+        <div class="exp-item">
+          <div class="exp-dot"></div>
+          <div class="exp-body">
+            <div class="exp-header">
+              <span class="exp-title">Software Engineer Intern &middot; Infinitaz</span>
+              <span class="exp-year">Spring 2025</span>
+            </div>
+            <p class="exp-desc">Built .NET services integrating Azure OpenAI and local models, and automated analytics workflows across distributed VMs.</p>
+          </div>
+        </div>
+
+        <div class="exp-item">
+          <div class="exp-dot"></div>
+          <div class="exp-body">
+            <div class="exp-header">
+              <span class="exp-title">Undergraduate Researcher &middot; UT Dallas</span>
+              <span class="exp-year">Summer 2024</span>
+            </div>
+            <p class="exp-desc">Researched deep learning for code analysis — RNN-based classification models and adversarial robustness on code representations.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- WRITING (temporarily hidden)
+  <div class="section-wrap" id="writing">
+    <div class="section-inner">
+      <div class="section-header">
+        <span class="section-label">writing</span>
+      </div>
+      <div class="writing-list">
+
+        <a href="writing/matching-engine.html" class="writing-item">
+          <span class="writing-title">What I learned building a matching engine from scratch</span>
+          <span class="writing-date">Feb 2026</span>
+        </a>
+
+        <a href="writing/tech-to-quant.html" class="writing-item">
+          <span class="writing-title">Notes on the tech-to-quant pivot</span>
+          <span class="writing-date">Jan 2026</span>
+        </a>
+
+      </div>
+    </div>
+  </div>
+  -->
+
+  <!-- CONTACT -->
+  <div class="section-wrap" id="contact">
+    <div class="section-inner">
+      <div class="contact-inner">
+        <h2>Let&rsquo;s build something.</h2>
+        <p>Open to internships, research, and interesting problems. Reach out anytime.</p>
+        <a href="mailto:troydaviscs@gmail.com" class="btn-primary">get in touch &rarr;</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer-wrap">
+    <div class="footer-inner">
+      <span class="footer-copy">&copy; 2026 troy davis</span>
+      <div class="footer-links">
+        <a href="https://github.com/troydavis06" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> github</a>
+        <a href="https://linkedin.com/in/troydavis06" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin"></i> linkedin</a>
+        <a href="mailto:troydaviscs@gmail.com"><i class="fas fa-envelope"></i> email</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
+  <script src="js/sphere.js"></script>
+  <script>
+    // Nav border on scroll
+    var nav = document.getElementById('main-nav');
+    window.addEventListener('scroll', function () {
+      nav.classList.toggle('scrolled', window.scrollY > 20);
+    });
+  </script>
+
 </body>
 </html>

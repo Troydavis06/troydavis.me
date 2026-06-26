@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>What I learned building a matching engine from scratch — Troy Davis</title>
+  <link rel="icon" href="../assets/td-favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/article.css">
+</head>
+<body>
+
+  <nav>
+    <a href="../index.html" class="back-link">&larr; troy davis</a>
+  </nav>
+
+  <article>
+    <header class="article-header">
+      <p class="article-label">writing</p>
+      <h1>What I learned building a matching engine from scratch</h1>
+      <p class="article-meta">Feb 2026 &middot; 6 min read</p>
+    </header>
+
+    <div class="article-body">
+      <p>A matching engine is one of those things that sounds simple until you actually sit down to build one. At its core, it just matches buy and sell orders. Two sides of a book, some price/time priority logic, done. Except it&rsquo;s not done, and the simplicity is a trap.</p>
+
+      <p>I built mine in C++ over a few weeks, mostly as a way to force myself to think seriously about data structure choices and concurrency. Here&rsquo;s what stuck.</p>
+
+      <h2>The order book is not a map</h2>
+
+      <p>My first instinct was to use a <code>std::map&lt;double, vector&lt;Order&gt;&gt;</code> — price level as key, queue of orders as value. This works. It&rsquo;s also wrong in ways that only show up under load.</p>
+
+      <p>Floating point as a map key is a footgun. Two prices that <em>should</em> be equal aren&rsquo;t always, depending on how they got there. Exchanges use integer price representation (price in ticks) for exactly this reason. Once I switched to integer keys, a whole class of subtle bugs disappeared.</p>
+
+      <p>The other issue: iteration order. For a bid book you want descending price order, for an ask book ascending. <code>std::map</code> is ascending by default. You can use <code>std::greater</code> as a comparator, but it&rsquo;s easy to get this wrong at the call site. I ended up wrapping both sides in a struct that made the iteration direction explicit.</p>
+
+      <h2>Latency is about the hot path</h2>
+
+      <p>Most of the time, the matching loop is idle. When it isn&rsquo;t, it needs to be fast. The critical path is: receive order &rarr; check top of book &rarr; match or insert &rarr; emit fills. Everything else — logging, risk checks, persistence — needs to be off that path.</p>
+
+      <p>I got a decent speedup just by separating concerns aggressively. The match loop touches nothing it doesn&rsquo;t have to. Side effects queue up and get processed by a separate thread. It&rsquo;s a simple pattern but the discipline required to stick to it is underrated.</p>
+
+      <h2>Concurrency is where it gets interesting</h2>
+
+      <p>A single-threaded matching engine is fine for a toy. For anything real, you need to think about how orders arrive concurrently. I used a lock-free SPSC queue to feed orders into the engine from the gateway thread, which kept the matching loop off mutexes entirely. The engine itself is single-threaded by design — the book is owned by exactly one thread.</p>
+
+      <p>This is the same approach most real exchange engines use: serialize access through a single-threaded core, push concurrency to the edges. The alternative is fine-grained locking on the book, which is a great way to spend a week debugging deadlocks.</p>
+
+      <h2>What I&rsquo;d do differently</h2>
+
+      <p>I underestimated how much of the work is in the protocol layer — parsing FIX or binary order messages efficiently, handling session state, dealing with reconnects. The matching logic ended up being maybe 20% of the total code. If I were starting over I&rsquo;d scope that more honestly from the start.</p>
+
+      <p>I&rsquo;d also add proper benchmarking earlier. I added it late and then had to refactor to make the hot path measurable. Measuring first would have shaped some early decisions differently.</p>
+
+      <p>Overall, building it was worth it. There&rsquo;s something clarifying about working close to the metal on a problem with real performance constraints. Recommended if you want to get a feel for systems-level C++.</p>
+    </div>
+  </article>
+
+</body>
+</html>
