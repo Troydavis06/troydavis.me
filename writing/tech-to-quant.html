@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notes on the tech-to-quant pivot — Troy Davis</title>
+  <link rel="icon" href="../assets/td-favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/article.css">
+</head>
+<body>
+
+  <nav>
+    <a href="../index.html" class="back-link">&larr; troy davis</a>
+  </nav>
+
+  <article>
+    <header class="article-header">
+      <p class="article-label">writing</p>
+      <h1>Notes on the tech-to-quant pivot</h1>
+      <p class="article-meta">Jan 2026 &middot; 4 min read</p>
+    </header>
+
+    <div class="article-body">
+      <p>A lot of CS students I know are interested in quant finance but aren&rsquo;t sure what the actual overlap is with software engineering. I&rsquo;ve been learning about it for the past year, so here&rsquo;s what I&rsquo;ve pieced together — not career advice, just observations.</p>
+
+      <h2>The skills that transfer directly</h2>
+
+      <p>Systems programming. Low-latency C++ is a real skill in HFT and the bar is high. If you can write cache-friendly code, reason about memory layout, and profile at the nanosecond level, that&rsquo;s genuinely valuable. The same instincts that make you good at systems work make you good here.</p>
+
+      <p>Probability and statistics. Not the undergrad survey course version — the kind where you actually understand what a distribution is, when the CLT applies and when it doesn&rsquo;t, and why naive backtesting is almost always lying to you. The math department matters here more than I expected.</p>
+
+      <p>Comfort with ambiguity. In software you usually know what correct looks like. In quant work, the signal is noisy, the ground truth is contested, and most ideas don&rsquo;t work. The ability to run a principled experiment and not fool yourself about the results is more important than knowing any particular tool.</p>
+
+      <h2>What&rsquo;s actually different</h2>
+
+      <p>The feedback loops are much longer. You ship a feature in SWE and you know in hours whether it works. You test a strategy and you&rsquo;re waiting weeks or months for statistically meaningful results. That&rsquo;s a different kind of patience.</p>
+
+      <p>The domain knowledge gap is real. Market microstructure — how prices actually form, what spreads mean, why order flow is informative — takes time to build intuition for. You can&rsquo;t just read a textbook and have it click. You need to sit with real data and watch things happen.</p>
+
+      <p>The interview process at quant firms is also just different. More math olympiad-style problem solving, more probability puzzles, more &ldquo;estimate this on the back of an envelope.&rdquo; If that style of thinking comes naturally, it&rsquo;s a good sign. If it doesn&rsquo;t, that&rsquo;s worth knowing early.</p>
+
+      <h2>How I&rsquo;ve been approaching it</h2>
+
+      <p>Building things is still the best way I know to learn. The matching engine was motivated by wanting to understand how the order book works at a mechanical level, not just conceptually. Reading about it is fine. Implementing it is better.</p>
+
+      <p>I&rsquo;ve also been spending time with market data — just loading tick data, plotting things, asking questions. Why does the spread widen here? What&rsquo;s happening to volume at that price? A lot of it I can&rsquo;t answer yet. But asking the right questions is usually the first step.</p>
+
+      <p>The honest summary: I&rsquo;m early in this. These are notes, not conclusions. I&rsquo;ll probably look back in two years and cringe at some of it. That seems fine.</p>
+    </div>
+  </article>
+
+</body>
+</html>
