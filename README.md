@@ -1,21 +1,25 @@
-## Troy Davis – Personal Website
+# troydavis.me
 
-This repository contains the source for my personal site, a simple single-page resume / portfolio.
+Personal site. Built simple on purpose.
 
-### Live Site
+**Live:** [troydavis.me](https://troydavis.me)
 
-Visit: [troydavis.me](https://troydavis.me)
+---
 
-### Tech Stack
+### Stack
 
-- **Markup / Styling**: HTML, CSS (I wanted this site to be simple so no JS framework)
-- **Icons / Fonts**: Font Awesome, DM Sans (Google Fonts)
-- **Hosting**: Vercel
+- HTML + CSS, no framework
+- Three.js for the sphere
+- DM Sans, Font Awesome
+- Deployed on Vercel
 
 ### Structure
 
-- `index.html` – Main single-page layout (About, Experience, Education, Projects)
-- `css/` – Shared styles and section-specific styles
-- `assets/` – Images and logos used on the site
-
-    
+```
+index.html        main page
+css/main.css      all styles for the main site
+js/sphere.js      three.js wireframe sphere
+writing/          article pages
+assets/           images, favicon
+instacleanser/    separate hosted site — do not touch
+```
