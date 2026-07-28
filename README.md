@@ -50,6 +50,14 @@ the baseline), and must never apply `letter-spacing` inside the grid.
 enhancement. Everything it reaches is also reachable by mouse, touch, Tab, and
 a screen reader.
 
+**The prompt in the status bar is real.** `:` focuses it. It understands
+`cd <section>`, `open <project>`, `ls`, `theme [light|dark]`, and `help`; Tab
+completes the word you're typing (to the longest common prefix, listing the
+candidates when ambiguous), the arrow keys walk history, and anything it does
+not understand gets an error rather than silence. It is hidden on touch, where
+there is no physical keyboard to drive it. Everything it can do is also
+reachable by clicking.
+
 ### History
 
 The previous hero was a WebGL "hook 'em horns" hand — a signed distance field

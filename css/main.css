@@ -23,9 +23,8 @@
   --fs-2xl: clamp(1.5rem, 3.5vw, 2rem);
 
   /* Mono has a fixed advance, so the largest size that fits N characters is
-     computable exactly. 11 = "TROY DAVIS" + the cursor cell. No clamp
-     guesswork, no horizontal scrollbar at any viewport. */
-  /* "TROY DAVIS" is 10 cells (6.0em) and the cursor adds 0.6em + 0.1em of
+     computable exactly — no clamp guesswork, no horizontal scrollbar at any
+     viewport. "TROY DAVIS" is 10 cells (6.0em) and the cursor adds 0.6em + 0.1em of
      margin, so the true width is 6.7em. 11.4 leaves ~2% slack, which keeps a
      wider fallback font from bumping the cursor onto its own line. */
   --hero-chars: 11.4;
@@ -247,6 +246,40 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   white-space: nowrap;
 }
 
+/* Command prompt. A real one: it parses, completes, and reports errors. */
+.prompt {
+  display: flex;
+  align-items: center;
+  gap: 1ch;
+  flex: 0 1 26ch;
+  min-width: 0;
+}
+.prompt__sigil { color: var(--accent); }
+.prompt__input {
+  flex: 1;
+  min-width: 0;
+  font: inherit;
+  color: var(--ink);
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 1px;
+  transition: border-color var(--dur);
+}
+.prompt__input::placeholder { color: var(--muted); opacity: 0.65; }
+.prompt__input:focus { border-bottom-color: var(--accent); outline: none; }
+.prompt:focus-within .prompt__sigil { color: var(--brand); }
+
+.statusbar__msg {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--muted);
+}
+.statusbar__msg[data-err] { color: var(--brand); }
+
 .statusbar__keys {
   display: flex;
   gap: 2.5ch;
@@ -328,13 +361,6 @@ kbd {
 }
 .kv a:hover { color: var(--accent); border-bottom-color: var(--accent); }
 
-.dot {
-  display: inline-block;
-  width: 0.5em; height: 0.5em;
-  margin-right: 1ch;
-  background: var(--live);
-  vertical-align: baseline;
-}
 
 /* --------------------------------------------------------------------------
    8. PRIMITIVE — .pane
@@ -440,16 +466,6 @@ kbd {
   .cursor { animation: none; opacity: 1; }
 }
 
-/* Each sentence gets its own line, then wraps naturally when it must. Letting
-   the browser break wherever it likes put "understand the / system" together. */
-.hero__thesis {
-  margin-top: var(--sp-3);
-  font-size: var(--fs-lg);
-  line-height: 1.55;
-  max-width: 52ch;
-  color: var(--ink);
-}
-.hero__thesis span { display: block; text-wrap: pretty; }
 
 .hero__kv { margin-top: var(--sp-5); max-width: 60ch; }
 
@@ -661,6 +677,12 @@ kbd {
   background: var(--pane-sel);
   box-shadow: inset 2px 0 0 var(--accent);
 }
+/* Whole sections are selectable too, but a full-width tinted block is far too
+   heavy — they get the accent gutter mark only. */
+section[data-nav][data-selected] {
+  background: none;
+  box-shadow: inset 3px 0 0 var(--accent);
+}
 .work[data-selected]::before,
 .log__row[data-selected]::before { content: '>'; }
 
@@ -770,6 +792,8 @@ kbd {
      scroll-margin-bottom resolve --status-h against the root, so a local
      override here would silently not reach them. */
   :root { --status-h: 2.75rem; }
+  /* No physical keyboard: the prompt would only summon the on-screen one. */
+  .prompt, .statusbar__msg { display: none; }
   .statusbar__keys { display: none; }
   .statusbar__actions { display: flex; }
   .statusbar {
@@ -787,7 +811,9 @@ kbd {
 
 /* Narrow but fine-pointer: shed the lowest-priority hints, keep the rest. */
 @media (max-width: 44rem) and (pointer: fine) {
-  .statusbar__keys > :nth-child(n + 4) { display: none; }
+  .statusbar__keys > :nth-child(n + 3) { display: none; }
+  .statusbar__msg { display: none; }
+  .prompt { flex-basis: 14ch; }
 }
 
 @media (max-width: 44rem) {

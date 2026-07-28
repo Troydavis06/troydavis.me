@@ -332,6 +332,16 @@
       case 't': if (!e.repeat) { toggleTheme(); e.preventDefault(); } break;
       case 'c': if (!e.repeat) { copyEmail();   e.preventDefault(); } break;
 
+      // preventDefault matters: without it the ':' lands in the input we just
+      // focused, and every command starts with a stray colon.
+      case ':':
+        // offsetParent is null when the prompt is display:none (touch layout).
+        if (!e.repeat && cmdInput && cmdInput.offsetParent !== null) {
+          cmdInput.focus();
+          e.preventDefault();
+        }
+        break;
+
       // Matched as the produced character, not as '/' + shift: on AZERTY and
       // Nordic layouts '?' is not Shift+/.
       case '?': if (!e.repeat) { openHelp(); e.preventDefault(); } break;
@@ -349,6 +359,154 @@
 
     // '/' is intentionally unbound — it is Firefox's quick-find.
   });
+
+  /* ------------------------------------------------------------------------
+     COMMAND PROMPT
+
+     A real one. It parses, tab-completes, keeps history, and reports errors
+     for input it does not understand. Nothing here is decorative, and nothing
+     it does is unreachable by other means.
+     ------------------------------------------------------------------------ */
+  var promptForm = document.getElementById('prompt-form');
+  var cmdInput   = document.getElementById('cmd');
+  var cmdMsg     = document.getElementById('cmd-msg');
+
+  var DESTS = {
+    '~': 'top', '/': 'top', '..': 'top', 'top': 'top', 'home': 'top',
+    'about': 'about', 'work': 'work', 'log': 'log', 'contact': 'contact'
+  };
+  var DEST_NAMES = ['about', 'work', 'log', 'contact', '~'];
+
+  var PROJECTS = {
+    waypoint: 'https://github.com/Troydavis06',
+    clara: 'https://claragot.us/',
+    instacleanser: 'https://troydavis.me/instacleanser/'
+  };
+
+  var VERBS = ['cd', 'ls', 'open', 'theme', 'help', 'clear'];
+  var history = [];
+  var histIdx = -1;
+
+  function say(text, isError) {
+    if (!cmdMsg) return;
+    cmdMsg.textContent = text;
+    if (isError) cmdMsg.setAttribute('data-err', '');
+    else cmdMsg.removeAttribute('data-err');
+    if (text) announce(text);
+  }
+
+  function runCommand(raw) {
+    var line = String(raw || '').trim();
+    if (!line) return;
+
+    history.unshift(line);
+    histIdx = -1;
+
+    var parts = line.split(/\s+/);
+    var verb = parts[0].toLowerCase();
+    var arg = (parts[1] || '').toLowerCase();
+
+    switch (verb) {
+      case 'cd': {
+        var id = DESTS[arg || '~'];
+        if (!id) { say('cd: no such section: ' + parts[1], true); return; }
+        jumpTo(document.getElementById(id));
+        say('');
+        return;
+      }
+
+      case 'open': {
+        if (!arg) { say('open: name it — ' + Object.keys(PROJECTS).join(', '), true); return; }
+        var url = PROJECTS[arg];
+        if (!url) { say('open: no such project: ' + parts[1], true); return; }
+        // User-initiated, so this is not a blocked popup.
+        window.open(url, '_blank', 'noopener');
+        say('opening ' + arg);
+        return;
+      }
+
+      case 'ls':
+        say(DEST_NAMES.join('   '));
+        return;
+
+      case 'theme':
+        if (arg === 'light' || arg === 'dark') { applyTheme(arg, true); say(arg + ' theme'); }
+        else if (!arg) { toggleTheme(); say(''); }
+        else say('theme: light or dark', true);
+        return;
+
+      case 'help':
+      case '?':
+        openHelp();
+        say('');
+        return;
+
+      case 'clear':
+        say('');
+        return;
+
+      default:
+        say(verb + ': command not found — try ls', true);
+    }
+  }
+
+  // Tab completion over the word currently being typed.
+  function complete() {
+    if (!cmdInput) return;
+    var line = cmdInput.value;
+    var parts = line.split(/\s+/);
+    var atVerb = parts.length < 2;
+    var word = (parts[atVerb ? 0 : 1] || '').toLowerCase();
+
+    var pool;
+    if (atVerb) pool = VERBS;
+    else if (parts[0].toLowerCase() === 'cd') pool = DEST_NAMES;
+    else if (parts[0].toLowerCase() === 'open') pool = Object.keys(PROJECTS);
+    else if (parts[0].toLowerCase() === 'theme') pool = ['light', 'dark'];
+    else return;
+
+    var hits = pool.filter(function (c) { return c.indexOf(word) === 0; });
+    if (!hits.length) return;
+
+    // Complete as far as every candidate agrees, then list the rest.
+    var common = hits[0];
+    for (var i = 1; i < hits.length; i++) {
+      var j = 0;
+      while (j < common.length && j < hits[i].length && common[j] === hits[i][j]) j++;
+      common = common.slice(0, j);
+    }
+    cmdInput.value = atVerb ? common : parts[0] + ' ' + common;
+    if (hits.length === 1) {
+      if (atVerb && common !== 'ls' && common !== 'clear' && common !== 'help') cmdInput.value += ' ';
+      say('');
+    } else {
+      say(hits.join('   '));
+    }
+  }
+
+  if (promptForm && cmdInput) {
+    promptForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      runCommand(cmdInput.value);
+      cmdInput.value = '';
+    });
+
+    cmdInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Tab' && !e.shiftKey) { e.preventDefault(); complete(); return; }
+      if (e.key === 'Escape') { e.preventDefault(); cmdInput.value = ''; say(''); cmdInput.blur(); return; }
+      if (e.key === 'ArrowUp' && history.length) {
+        e.preventDefault();
+        histIdx = Math.min(histIdx + 1, history.length - 1);
+        cmdInput.value = history[histIdx];
+        return;
+      }
+      if (e.key === 'ArrowDown' && histIdx > -1) {
+        e.preventDefault();
+        histIdx -= 1;
+        cmdInput.value = histIdx < 0 ? '' : history[histIdx];
+      }
+    });
+  }
 
   /* ------------------------------------------------------------------------
      TOUCH ACTION BAR

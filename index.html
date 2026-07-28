@@ -65,13 +65,8 @@
 <main id="main">
 
   <!-- ===================== HERO ===================== -->
-  <section id="top" class="wrap hero" aria-labelledby="hero-name">
+  <section id="top" class="wrap hero" data-nav tabindex="-1" aria-labelledby="hero-name">
     <h1 class="hero__name" id="hero-name">TROY&nbsp;DAVIS<span class="cursor" aria-hidden="true"></span></h1>
-
-    <p class="hero__thesis">
-      <span>Most tools assume you already understand the system.</span>
-      <span>I build the ones that get you there.</span>
-    </p>
 
     <dl class="kv hero__kv">
       <dt>now</dt>       <dd>software engineer intern @ hpe</dd>
@@ -82,18 +77,24 @@
   </section>
 
   <!-- ===================== ABOUT ===================== -->
-  <section id="about" class="wrap section" aria-labelledby="about-h">
+  <section id="about" class="wrap section" data-nav tabindex="-1" aria-labelledby="about-h">
     <h2 class="section__title" id="about-h"><span class="section__num">01</span> about</h2>
 
     <div class="prose">
       <p class="lead">
-        I'm a CS and math student at UT Austin. The work I care about is the
-        unglamorous part: figuring out how a system is actually shaped before
-        writing a line against it.
+        I'm a CS and math student at UT Austin, and I've been at this a while:
+        an internship in high school, a summer researching deep learning for
+        code analysis at UT Dallas, and two summers at HPE &mdash; compliance
+        tooling the first, an agentic vulnerability detection and remediation
+        workflow this one.
       </p>
       <p>
-        Right now I'm interning at HPE and building tools I'd actually want to
-        use. When I'm not coding, I'm usually playing basketball or disc golf,
+        Mostly I like learning how things work, and building tools I'd actually
+        want to use. That's why the work below leans toward systems and tooling
+        instead of apps.
+      </p>
+      <p>
+        When I'm not coding, I'm usually playing basketball or disc golf,
         spending time with friends and family, or driving back home to Cypress,
         Texas.
       </p>
@@ -222,19 +223,16 @@
   </section>
 
   <!-- ===================== CONTACT ===================== -->
-  <section id="contact" class="wrap section" aria-labelledby="contact-h">
+  <section id="contact" class="wrap section" data-nav tabindex="-1" aria-labelledby="contact-h">
     <h2 class="section__title" id="contact-h"><span class="section__num">04</span> contact</h2>
 
     <p class="contact__lead">Email is the fastest way in.</p>
 
     <dl class="kv">
-      <dt>status</dt>
-      <dd><span class="dot" aria-hidden="true"></span>open to summer 2027 internships and research</dd>
-
       <dt>email</dt>
       <dd>
-        <a href="mailto:troydaviscs@gmail.com">troydaviscs@gmail.com</a>
-        <button class="copy" id="copy-email" type="button" data-copy="troydaviscs@gmail.com">[c] copy</button>
+        <a href="mailto:troydavis@utexas.edu">troydavis@utexas.edu</a>
+        <button class="copy" id="copy-email" type="button" data-copy="troydavis@utexas.edu">[c] copy</button>
       </dd>
 
       <dt>github</dt>
@@ -253,11 +251,21 @@
 
 <div class="statusbar">
   <span class="statusbar__path" id="status-path">~/</span>
+
+  <form class="prompt" id="prompt-form" autocomplete="off">
+    <label class="visually-hidden" for="cmd">Command. Try: cd work</label>
+    <span class="prompt__sigil" aria-hidden="true">$</span>
+    <input class="prompt__input" id="cmd" type="text" name="cmd" spellcheck="false"
+           autocapitalize="off" autocorrect="off" placeholder="cd work">
+  </form>
+
+  <span class="statusbar__msg" id="cmd-msg"></span>
+
   <ul class="statusbar__keys" aria-hidden="true">
     <li><kbd>j/k</kbd>move</li>
     <li><kbd>enter</kbd>open</li>
+    <li><kbd>:</kbd>cmd</li>
     <li><kbd>t</kbd>theme</li>
-    <li><kbd>c</kbd>email</li>
     <li><kbd>?</kbd>keys</li>
   </ul>
   <div class="statusbar__actions">
@@ -278,6 +286,17 @@
     <dt>c</dt>          <dd>copy email</dd>
     <dt>?</dt>          <dd>this list</dd>
     <dt>esc</dt>        <dd>dismiss</dd>
+  </dl>
+
+  <h2 id="help-cmd-h">commands</h2>
+  <dl class="help__keys">
+    <dt>:</dt>            <dd>focus the prompt</dd>
+    <dt>cd &lt;name&gt;</dt><dd>go to a section &mdash; about, work, log, contact, ~</dd>
+    <dt>open &lt;name&gt;</dt><dd>open a project &mdash; waypoint, clara, instacleanser</dd>
+    <dt>ls</dt>           <dd>list what you can cd into</dd>
+    <dt>theme</dt>        <dd>toggle, or theme light / theme dark</dd>
+    <dt>tab</dt>          <dd>complete the word you're typing</dd>
+    <dt>&uarr; / &darr;</dt><dd>previous commands</dd>
   </dl>
   <button class="help__close" type="button" id="help-close">[esc] close</button>
 </dialog>
