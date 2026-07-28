@@ -93,9 +93,12 @@
   var visible = Object.create(null);
 
   function paintPath() {
-    // First section in document order currently inside the band wins.
+    // LAST section in document order currently inside the band wins — that is
+    // the one whose top most recently crossed it. Taking the first instead
+    // means a section you have just scrolled past keeps the label, because
+    // its bottom edge still clips the band by a pixel or two.
     var id = null;
-    for (var i = 0; i < SECTIONS.length; i++) {
+    for (var i = SECTIONS.length - 1; i >= 0; i--) {
       if (visible[SECTIONS[i]]) { id = SECTIONS[i]; break; }
     }
     if (!id) return;
@@ -450,60 +453,209 @@
     }
   }
 
-  // Tab completion over the word currently being typed.
-  function complete() {
-    if (!cmdInput) return;
-    var line = cmdInput.value;
-    var parts = line.split(/\s+/);
+  /* One source of truth for "what can go here", shared by Tab and the menu. */
+  var HINTS = {
+    cd: 'go to a section', open: 'open a project', ls: 'list sections',
+    theme: 'light or dark', help: 'key reference', clear: 'clear this line'
+  };
+  var TAKES_ARG = { cd: 1, open: 1, theme: 1 };
+
+  function context(line) {
+    var parts = String(line).split(/\s+/);
     var atVerb = parts.length < 2;
     var word = (parts[atVerb ? 0 : 1] || '').toLowerCase();
+    var pool = null;
+    if (atVerb) {
+      pool = VERBS;
+    } else {
+      var v = parts[0].toLowerCase();
+      if (v === 'cd') pool = DEST_NAMES;
+      else if (v === 'open') pool = Object.keys(PROJECTS);
+      else if (v === 'theme') pool = ['light', 'dark'];
+    }
+    return { parts: parts, atVerb: atVerb, word: word, pool: pool };
+  }
 
-    var pool;
-    if (atVerb) pool = VERBS;
-    else if (parts[0].toLowerCase() === 'cd') pool = DEST_NAMES;
-    else if (parts[0].toLowerCase() === 'open') pool = Object.keys(PROJECTS);
-    else if (parts[0].toLowerCase() === 'theme') pool = ['light', 'dark'];
-    else return;
+  function candidates(line) {
+    var c = context(line);
+    if (!c.pool) return { ctx: c, hits: [] };
+    return {
+      ctx: c,
+      hits: c.pool.filter(function (x) { return x.indexOf(c.word) === 0; })
+    };
+  }
 
-    var hits = pool.filter(function (c) { return c.indexOf(word) === 0; });
-    if (!hits.length) return;
+  /* ---- the menu ---- */
+  var cmdMenu = document.getElementById('cmd-menu');
+  var menuItems = [];
+  var menuIdx = -1;
 
-    // Complete as far as every candidate agrees, then list the rest.
-    var common = hits[0];
-    for (var i = 1; i < hits.length; i++) {
+  function menuOpen() { return !!(cmdMenu && cmdMenu.hasAttribute('data-open')); }
+
+  function closeMenu() {
+    if (!cmdMenu) return;
+    cmdMenu.removeAttribute('data-open');
+    cmdMenu.innerHTML = '';
+    menuItems = [];
+    menuIdx = -1;
+    if (cmdInput) {
+      cmdInput.setAttribute('aria-expanded', 'false');
+      cmdInput.removeAttribute('aria-activedescendant');
+    }
+  }
+
+  function markMenu(i) {
+    for (var n = 0; n < menuItems.length; n++) {
+      menuItems[n].removeAttribute('data-active');
+      menuItems[n].setAttribute('aria-selected', 'false');
+    }
+    menuIdx = i;
+    if (i < 0 || !menuItems[i]) {
+      if (cmdInput) cmdInput.removeAttribute('aria-activedescendant');
+      return;
+    }
+    menuItems[i].setAttribute('data-active', '');
+    menuItems[i].setAttribute('aria-selected', 'true');
+    if (cmdInput) cmdInput.setAttribute('aria-activedescendant', menuItems[i].id);
+    if (menuItems[i].scrollIntoView) menuItems[i].scrollIntoView({ block: 'nearest' });
+  }
+
+  function renderMenu() {
+    if (!cmdMenu || !cmdInput) return;
+    var line = cmdInput.value;
+    var r = candidates(line);
+
+    // Nothing typed yet, or nothing to offer: stay out of the way.
+    if (!line.trim() || !r.hits.length) { closeMenu(); return; }
+
+    cmdMenu.innerHTML = '';
+    menuItems = [];
+    r.hits.forEach(function (name, i) {
+      var li = document.createElement('li');
+      li.id = 'cmd-opt-' + i;
+      li.setAttribute('role', 'option');
+      li.setAttribute('aria-selected', 'false');
+
+      // Grid column 1 is the caret gutter, drawn by ::before — no element here.
+      var label = document.createElement('span');
+      label.textContent = name;
+      li.appendChild(label);
+
+      if (r.ctx.atVerb && HINTS[name]) {
+        var hint = document.createElement('span');
+        hint.className = 'menu__hint';
+        hint.textContent = HINTS[name];
+        li.appendChild(hint);
+      }
+
+      // mousedown, not click: click fires after blur would already have closed us
+      li.addEventListener('mousedown', function (e) { e.preventDefault(); accept(name); });
+      cmdMenu.appendChild(li);
+      menuItems.push(li);
+    });
+
+    cmdMenu.setAttribute('data-open', '');
+    cmdInput.setAttribute('aria-expanded', 'true');
+    markMenu(-1);
+  }
+
+  function accept(name) {
+    var c = context(cmdInput.value);
+    if (c.atVerb) {
+      cmdInput.value = name + (TAKES_ARG[name] ? ' ' : '');
+      cmdInput.focus();
+      renderMenu();                       // now offer that verb's arguments
+      if (!TAKES_ARG[name]) { runCommand(cmdInput.value); cmdInput.value = ''; closeMenu(); }
+    } else {
+      cmdInput.value = c.parts[0] + ' ' + name;
+      runCommand(cmdInput.value);
+      cmdInput.value = '';
+      closeMenu();
+      cmdInput.focus();
+    }
+  }
+
+  // Tab: complete as far as every candidate agrees, and show the rest.
+  function complete() {
+    if (!cmdInput) return;
+    var r = candidates(cmdInput.value);
+    if (!r.hits.length) return;
+
+    var common = r.hits[0];
+    for (var i = 1; i < r.hits.length; i++) {
       var j = 0;
-      while (j < common.length && j < hits[i].length && common[j] === hits[i][j]) j++;
+      while (j < common.length && j < r.hits[i].length && common[j] === r.hits[i][j]) j++;
       common = common.slice(0, j);
     }
-    cmdInput.value = atVerb ? common : parts[0] + ' ' + common;
-    if (hits.length === 1) {
-      if (atVerb && common !== 'ls' && common !== 'clear' && common !== 'help') cmdInput.value += ' ';
-      say('');
+    cmdInput.value = r.ctx.atVerb ? common : r.ctx.parts[0] + ' ' + common;
+
+    if (r.hits.length > 1) { renderMenu(); return; }
+
+    // Exactly one hit: the word is now complete. Leaving a one-item menu open
+    // would be noise, and worse, it would keep owning the arrow keys.
+    say('');
+    if (r.ctx.atVerb && TAKES_ARG[common]) {
+      cmdInput.value += ' ';
+      renderMenu();               // ...but do offer that verb's arguments
     } else {
-      say(hits.join('   '));
+      closeMenu();
     }
   }
 
   if (promptForm && cmdInput) {
     promptForm.addEventListener('submit', function (e) {
       e.preventDefault();
+      closeMenu();
       runCommand(cmdInput.value);
       cmdInput.value = '';
     });
 
+    cmdInput.addEventListener('input', renderMenu);
+    cmdInput.addEventListener('blur', function () {
+      // Let a mousedown on an option win the race.
+      window.setTimeout(closeMenu, 120);
+    });
+
     cmdInput.addEventListener('keydown', function (e) {
       if (e.key === 'Tab' && !e.shiftKey) { e.preventDefault(); complete(); return; }
-      if (e.key === 'Escape') { e.preventDefault(); cmdInput.value = ''; say(''); cmdInput.blur(); return; }
-      if (e.key === 'ArrowUp' && history.length) {
+
+      if (e.key === 'Enter' && menuOpen() && menuIdx >= 0) {
         e.preventDefault();
-        histIdx = Math.min(histIdx + 1, history.length - 1);
-        cmdInput.value = history[histIdx];
+        accept(menuItems[menuIdx].firstChild.textContent);
         return;
       }
-      if (e.key === 'ArrowDown' && histIdx > -1) {
+
+      if (e.key === 'Escape') {
         e.preventDefault();
-        histIdx -= 1;
-        cmdInput.value = histIdx < 0 ? '' : history[histIdx];
+        // First Escape dismisses the menu, second clears and leaves the prompt.
+        if (menuOpen()) { closeMenu(); return; }
+        cmdInput.value = '';
+        say('');
+        cmdInput.blur();
+        return;
+      }
+
+      // While the menu is up it owns the arrows; otherwise they walk history.
+      if (e.key === 'ArrowDown') {
+        if (menuOpen()) { e.preventDefault(); markMenu((menuIdx + 1) % menuItems.length); return; }
+        if (histIdx > -1) {
+          e.preventDefault();
+          histIdx -= 1;
+          cmdInput.value = histIdx < 0 ? '' : history[histIdx];
+        }
+        return;
+      }
+      if (e.key === 'ArrowUp') {
+        if (menuOpen()) {
+          e.preventDefault();
+          markMenu(menuIdx <= 0 ? menuItems.length - 1 : menuIdx - 1);
+          return;
+        }
+        if (history.length) {
+          e.preventDefault();
+          histIdx = Math.min(histIdx + 1, history.length - 1);
+          cmdInput.value = history[histIdx];
+        }
       }
     });
   }

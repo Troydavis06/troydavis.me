@@ -256,7 +256,10 @@
     <label class="visually-hidden" for="cmd">Command. Try: cd work</label>
     <span class="prompt__sigil" aria-hidden="true">$</span>
     <input class="prompt__input" id="cmd" type="text" name="cmd" spellcheck="false"
-           autocapitalize="off" autocorrect="off" placeholder="cd work">
+           autocapitalize="off" autocorrect="off" placeholder="cd work"
+           role="combobox" aria-expanded="false" aria-controls="cmd-menu"
+           aria-autocomplete="list">
+    <ul class="prompt__menu" id="cmd-menu" role="listbox" aria-label="Completions"></ul>
   </form>
 
   <span class="statusbar__msg" id="cmd-msg"></span>
@@ -296,7 +299,7 @@
     <dt>ls</dt>           <dd>list what you can cd into</dd>
     <dt>theme</dt>        <dd>toggle, or theme light / theme dark</dd>
     <dt>tab</dt>          <dd>complete the word you're typing</dd>
-    <dt>&uarr; / &darr;</dt><dd>previous commands</dd>
+    <dt>&uarr; / &darr;</dt><dd>pick from the list, or walk history when it's closed</dd>
   </dl>
   <button class="help__close" type="button" id="help-close">[esc] close</button>
 </dialog>

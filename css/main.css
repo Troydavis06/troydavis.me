@@ -137,7 +137,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 /* Anchors, Tab, and scrollIntoView must all clear the two fixed bars. */
 [id],
 [data-nav] {
-  scroll-margin-top: calc(var(--bar-h) + var(--sp-3));
+  scroll-margin-top: calc(var(--bar-h) + var(--sp-2));
   scroll-margin-bottom: calc(var(--status-h) + var(--sp-3));
 }
 
@@ -248,12 +248,47 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 
 /* Command prompt. A real one: it parses, completes, and reports errors. */
 .prompt {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 1ch;
   flex: 0 1 26ch;
   min-width: 0;
 }
+
+/* Completion menu, opening upward out of the status bar. */
+.prompt__menu {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + var(--sp-2));
+  left: 0;
+  z-index: 10;
+  min-width: 24ch;
+  /* The prompt sits partway across the bar, so an open menu could otherwise
+     push the document wider than the viewport on a narrow window. */
+  max-width: calc(100vw - 2 * var(--pad-x));
+  max-height: 11rem;
+  overflow-y: auto;
+  padding-block: var(--sp-1);
+  background: var(--pane);
+  border: 1px solid var(--rule-strong);
+}
+.prompt__menu[data-open] { display: block; }
+.prompt__menu li {
+  display: grid;
+  grid-template-columns: 3ch minmax(0, 1fr) max-content;
+  column-gap: 1ch;
+  padding-inline: 1.5ch;
+  color: var(--muted);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.prompt__menu li::before { content: ''; color: var(--accent); }
+.prompt__menu li[data-active] { background: var(--pane-sel); color: var(--ink); }
+.prompt__menu li[data-active]::before { content: '>'; }
+.prompt__menu li:hover { background: var(--pane-sel); color: var(--ink); }
+.prompt__menu .menu__hint { color: var(--muted); }
+.prompt__menu li[data-active] .menu__hint { color: var(--muted); }
 .prompt__sigil { color: var(--accent); }
 .prompt__input {
   flex: 1;
@@ -308,8 +343,14 @@ kbd {
 /* --------------------------------------------------------------------------
    6. SECTIONS
    -------------------------------------------------------------------------- */
-.section { padding-block: var(--sp-6); }
-.section + .section { padding-top: 0; }
+/* Bottom padding only. scrollIntoView targets the border box, so any
+   padding-top here becomes dead space above the heading when you jump to a
+   section — and an uneven padding-top makes each section land at a different
+   height. Spacing comes from the preceding block's padding-bottom instead. */
+.section {
+  padding-top: 0;
+  padding-bottom: var(--sp-6);
+}
 
 /* Heading sits on a rule that runs to the end of the measure — the label-on-
    the-line move that carries most of the TUI read, with zero risky glyphs. */
@@ -683,6 +724,18 @@ section[data-nav][data-selected] {
   background: none;
   box-shadow: inset 3px 0 0 var(--accent);
 }
+
+/* Jumping to a section (cd, 1-4, g/G, an #anchor) focuses it so the move is
+   announced. An outline around a whole section draws a box the height of the
+   entire section, hanging way down the page — so sections and the footer get
+   the same gutter mark instead. Still a clearly visible focus indicator. */
+section:focus,
+section:focus-visible,
+footer:focus,
+footer:focus-visible {
+  outline: none;
+  box-shadow: inset 3px 0 0 var(--accent);
+}
 .work[data-selected]::before,
 .log__row[data-selected]::before { content: '>'; }
 
@@ -817,13 +870,12 @@ section[data-nav][data-selected] {
 }
 
 @media (max-width: 44rem) {
+  .section { padding-bottom: var(--sp-5); }
   .topbar__path { display: none; }
   .topbar__brand-full { display: none; }
   .topbar__brand-short { display: inline; }
   .topbar { gap: 1.5ch; }
   .topbar__nav { gap: 1.5ch; }
-
-  .section { padding-block: var(--sp-5); }
 
   /* 4 tracks cannot fit in ~44 characters. Stack, period first, which reads
      as a log timestamp. Four lines of query — precisely because it is grid. */
