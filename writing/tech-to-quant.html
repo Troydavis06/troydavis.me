@@ -1,29 +1,41 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Notes on the tech-to-quant pivot — Troy Davis</title>
-  <link rel="icon" href="../assets/td-favicon.svg" type="image/svg+xml">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/article.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Notes on the tech-to-quant pivot — Troy Davis</title>
+<meta name="description" content="What actually transfers from software engineering to quant finance, what doesn't, and how I've been approaching the gap.">
+<meta name="theme-color" content="#f4f1ea">
+<link rel="icon" href="../assets/td-favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+<script>
+(function () {
+  try {
+    var s = localStorage.getItem('theme');
+    document.documentElement.setAttribute('data-theme',
+      (s === 'light' || s === 'dark') ? s
+      : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+  } catch (e) {}
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/main.css">
 </head>
-<body>
+<body class="doc">
 
-  <nav>
-    <a href="../index.html" class="back-link">&larr; troy davis</a>
-  </nav>
+<div class="wrap">
+  <nav><a href="../index.html" class="back-link">&lt;- troy davis</a></nav>
 
-  <article>
-    <header class="article-header">
-      <p class="article-label">writing</p>
-      <h1>Notes on the tech-to-quant pivot</h1>
-      <p class="article-meta">Jan 2026 &middot; 4 min read</p>
+  <article class="article">
+    <header class="article__head">
+      <p class="article__label">writing</p>
+      <h1 class="article__title">Notes on the tech-to-quant pivot</h1>
+      <p class="article__meta">Jan 2026 &middot; 4 min read</p>
     </header>
 
-    <div class="article-body">
+    <div class="article__body">
       <p>A lot of CS students I know are interested in quant finance but aren&rsquo;t sure what the actual overlap is with software engineering. I&rsquo;ve been learning about it for the past year, so here&rsquo;s what I&rsquo;ve pieced together — not career advice, just observations.</p>
 
       <h2>The skills that transfer directly</h2>
@@ -51,6 +63,7 @@
       <p>The honest summary: I&rsquo;m early in this. These are notes, not conclusions. I&rsquo;ll probably look back in two years and cringe at some of it. That seems fine.</p>
     </div>
   </article>
+</div>
 
 </body>
 </html>

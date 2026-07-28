@@ -1,28 +1,45 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Résumé — Troy Davis</title>
-  <link rel="icon" href="assets/td-favicon.svg" type="image/svg+xml">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/article.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Résumé — Troy Davis</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#f4f1ea">
+<link rel="icon" href="assets/td-favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<script>
+(function () {
+  try {
+    var s = localStorage.getItem('theme');
+    document.documentElement.setAttribute('data-theme',
+      (s === 'light' || s === 'dark') ? s
+      : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+  } catch (e) {}
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/main.css">
 </head>
-<body>
+<body class="doc">
 
-  <nav>
-    <a href="index.html" class="back-link">&larr; troy davis</a>
-  </nav>
+<div class="wrap">
+  <nav><a href="index.html" class="back-link">&lt;- troy davis</a></nav>
 
-  <article>
-    <header class="article-header">
-      <p class="article-label">résumé</p>
-      <h1>Coming later.</h1>
-      <p class="article-meta">Check back soon.</p>
+  <article class="article">
+    <header class="article__head">
+      <p class="article__label">résumé</p>
+      <h1 class="article__title">Not up yet.</h1>
+      <p class="article__meta">
+        In the meantime, the <a href="index.html#log">log</a> on the front page covers
+        the same ground, and <a href="mailto:troydaviscs@gmail.com">email</a> gets you a
+        PDF faster than this page will.
+      </p>
     </header>
   </article>
+</div>
 
 </body>
 </html>

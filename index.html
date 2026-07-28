@@ -1,232 +1,289 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Troy Davis</title>
-  <link rel="icon" href="assets/td-favicon.svg" type="image/svg+xml">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="css/main.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<title>Troy Davis — CS + math @ UT Austin</title>
+<meta name="description" content="Troy Davis. CS and math student at UT Austin, software engineer intern at HPE. Building Waypoint, a terminal companion for understanding codebases.">
+<link rel="canonical" href="https://troydavis.me/">
+<meta name="theme-color" content="#f4f1ea">
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://troydavis.me/">
+<meta property="og:title" content="Troy Davis">
+<meta property="og:description" content="CS and math student at UT Austin. Building Waypoint, a terminal companion for understanding codebases.">
+<meta property="og:image" content="https://troydavis.me/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" href="assets/td-favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+
+<!-- Resolve theme before first paint. Synchronous and inline on purpose:
+     any deferral here is a visible flash of the wrong theme. -->
+<script>
+(function () {
+  try {
+    var stored = localStorage.getItem('theme');
+    var theme = (stored === 'light' || stored === 'dark')
+      ? stored
+      : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+  } catch (e) { /* Safari private mode throws on localStorage; light is correct */ }
+})();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/main.css">
 </head>
 <body>
 
-  <!-- NAV -->
-  <nav id="main-nav">
-    <a href="#" class="brand">
-      <span class="brand-dot">•</span>troy
-    </a>
-    <div class="nav-links">
-      <a href="#about">about</a>
-      <a href="#experience">experience</a>
-      <a href="#work">work</a>
-      <!-- <a href="#writing">writing</a> -->
-      <a href="#contact">contact</a>
-    </div>
-  </nav>
+<a class="skip" href="#main">skip to content</a>
 
-  <!-- HERO -->
-  <section id="hero">
-    <div class="hero-text">
-      <p class="hero-label">cs + math @ ut austin</p>
-      <h1>Hi, I'm Troy.<br>I have fun building.</h1>
-      <p class="hero-sub">CS + math student at UT Austin, working on systems, tooling, and things with real users.</p>
-      <div class="hero-cta">
-        <a href="#about" class="btn-primary">get to know me</a>
-        <a href="resume.html" class="btn-secondary">résumé</a>
-      </div>
-    </div>
-    <div id="sphere-canvas"></div>
+<header class="topbar">
+  <a class="topbar__brand" href="#top">
+    <span class="topbar__brand-full">troy davis</span>
+    <span class="topbar__brand-short">troy</span>
+  </a>
+  <span class="topbar__path" id="path">~/</span>
+  <nav class="topbar__nav" aria-label="Sections">
+    <a href="#about">about</a>
+    <a href="#work">work</a>
+    <a href="#log">log</a>
+    <a href="#contact">contact</a>
+  </nav>
+  <button class="topbar__theme" id="theme-btn" type="button">
+    <span aria-hidden="true" id="theme-icon">dark</span>
+    <span class="visually-hidden">Switch to dark theme</span>
+  </button>
+</header>
+
+<main id="main">
+
+  <!-- ===================== HERO ===================== -->
+  <section id="top" class="wrap hero" aria-labelledby="hero-name">
+    <h1 class="hero__name" id="hero-name">TROY&nbsp;DAVIS<span class="cursor" aria-hidden="true"></span></h1>
+
+    <p class="hero__thesis">
+      <span>Most tools assume you already understand the system.</span>
+      <span>I build the ones that get you there.</span>
+    </p>
+
+    <dl class="kv hero__kv">
+      <dt>now</dt>       <dd>software engineer intern @ hpe</dd>
+      <dt>building</dt>  <dd>waypoint — talk to your codebase</dd>
+      <dt>school</dt>    <dd>cs + math, ut austin</dd>
+      <dt>location</dt>  <dd>austin, tx (home: cypress)</dd>
+    </dl>
   </section>
 
-  <!-- ABOUT -->
-  <div class="section-wrap" id="about">
-    <div class="section-inner">
-      <div class="section-header">
-        <span class="section-label">about</span>
-      </div>
-      <div class="about-grid">
-        <div class="about-bio">
-          <p class="lead">I'm a CS + math student at UT Austin who likes building things that sit close to the metal — systems, tooling, and the occasional thing with real users.</p>
-          <p>Right now I'm interning at HPE and building tools I'd actually want to use. When I'm not coding, I'm usually playing basketball or disc golf, spending time with friends and family, or driving back home to Cypress, Texas.</p>
-        </div>
-        <div class="skills-box">
-          <p class="skills-box-label">currently working with</p>
-          <div class="skills-tags">
-            <span class="skill-tag">Agentic workflows</span>
-            <span class="skill-tag">Vulnerability detection &amp; remediation</span>
-            <span class="skill-tag">C++</span>
-            <span class="skill-tag">C</span>
-            <span class="skill-tag">Business development</span>
-          </div>
-        </div>
-      </div>
+  <!-- ===================== ABOUT ===================== -->
+  <section id="about" class="wrap section" aria-labelledby="about-h">
+    <h2 class="section__title" id="about-h"><span class="section__num">01</span> about</h2>
+
+    <div class="prose">
+      <p class="lead">
+        I'm a CS and math student at UT Austin. The work I care about is the
+        unglamorous part: figuring out how a system is actually shaped before
+        writing a line against it.
+      </p>
+      <p>
+        Right now I'm interning at HPE and building tools I'd actually want to
+        use. When I'm not coding, I'm usually playing basketball or disc golf,
+        spending time with friends and family, or driving back home to Cypress,
+        Texas.
+      </p>
     </div>
+  </section>
+
+  <!-- ===================== WORK ===================== -->
+  <section id="work" class="wrap section" aria-labelledby="work-h">
+    <h2 class="section__title" id="work-h"><span class="section__num">02</span> work</h2>
+
+    <div class="work-list">
+
+      <article class="work work--featured pane" data-nav tabindex="-1"
+               data-nav-href="https://github.com/Troydavis06">
+        <p class="pane__title">building now</p>
+        <div class="work__head">
+          <h3 class="work__name">waypoint</h3>
+          <span class="work__lead" aria-hidden="true"></span>
+          <p class="work__meta">2026 &middot; python &middot; <span class="is-soon">unreleased</span></p>
+        </div>
+
+        <p class="work__tagline">Talk to your codebase.</p>
+
+        <p class="work__desc">
+          A terminal companion that helps you build a mental model of a codebase
+          &mdash; by voice or text &mdash; and turns the decisions you reach into
+          well-scoped GitHub issues a coding agent can pick up without
+          back-and-forth.
+        </p>
+        <p class="work__desc">
+          Large codebases, especially AI-generated ones, are hard to hold in your
+          head. Waypoint points at a repo, builds a structural map with
+          tree-sitter, and answers questions grounded in it. When a conversation
+          converges on "we should build X," it drafts the issue.
+        </p>
+        <p class="work__desc">
+          It doesn't write code. It's the layer between human understanding and
+          machine execution.
+        </p>
+
+        <ul class="feats">
+          <li>grounded q&amp;a over a real tree-sitter structural map</li>
+          <li>push-to-talk voice i/o (ctrl+r), local or cloud backends</li>
+          <li>interactive feature graph at three levels of detail</li>
+          <li>conversation to structured issue, with a preview step</li>
+          <li>multi-provider llm routing via litellm</li>
+          <li>sessions persist per-repo in sqlite</li>
+        </ul>
+
+        <p><span class="badge">public release coming</span></p>
+      </article>
+
+      <article class="work" data-nav tabindex="-1" data-nav-href="https://claragot.us/">
+        <div class="work__head">
+          <h3 class="work__name">clara</h3>
+          <span class="work__lead" aria-hidden="true"></span>
+          <p class="work__meta">2026 &middot; agents &middot; <span class="is-live">live</span></p>
+        </div>
+        <p class="work__desc">
+          A multi-agent system built for Hook'em Hacks 2026. Aggregates output
+          from multiple code-analysis scanners into prioritized, developer-ready
+          findings with remediation insights.
+        </p>
+        <p class="card-links">
+          <a class="link-tag" href="https://claragot.us/" target="_blank" rel="noopener noreferrer">[site]</a>
+          <a class="link-tag" href="https://github.com/Troydavis06/CLARA" target="_blank" rel="noopener noreferrer">[repo]</a>
+        </p>
+      </article>
+
+      <article class="work" data-nav tabindex="-1" data-nav-href="https://troydavis.me/instacleanser/">
+        <div class="work__head">
+          <h3 class="work__name">instacleanser</h3>
+          <span class="work__lead" aria-hidden="true"></span>
+          <p class="work__meta">2025 &middot; extension &middot; <span class="is-live">live</span></p>
+        </div>
+        <p class="work__desc">
+          A browser extension that reads your Instagram follower data in-session,
+          finds who doesn't follow back, and handles the unfollow flow one at a
+          time or in bulk.
+        </p>
+        <p class="card-links">
+          <a class="link-tag" href="https://troydavis.me/instacleanser/" target="_blank" rel="noopener noreferrer">[site]</a>
+          <a class="link-tag" href="https://github.com/Troydavis06/InstaCleanser" target="_blank" rel="noopener noreferrer">[repo]</a>
+        </p>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ===================== LOG ===================== -->
+  <section id="log" class="wrap section" aria-labelledby="log-h">
+    <h2 class="section__title" id="log-h"><span class="section__num">03</span> log</h2>
+
+    <ol class="log">
+      <li class="log__row" data-current data-nav tabindex="-1">
+        <span class="log__period">2026 summer</span>
+        <span class="log__role">Software Engineer Intern</span>
+        <span class="log__org">Hewlett Packard Enterprise</span>
+        <p class="log__note">Building agentic workflow for vulnerability detection and remediation.</p>
+      </li>
+      <li class="log__row" data-current data-nav tabindex="-1">
+        <span class="log__period">2026 summer</span>
+        <span class="log__role">Competitive Programming Exam Author</span>
+        <span class="log__org">A+ Computer Science</span>
+        <p class="log__note">Writing UIL style programming and written exams.</p>
+      </li>
+      <li class="log__row" data-nav tabindex="-1">
+        <span class="log__period">2025 summer</span>
+        <span class="log__role">Software Engineer Intern</span>
+        <span class="log__org">Hewlett Packard Enterprise</span>
+        <p class="log__note">Built tooling to automate compliance workflow analysis and generate ML-based control group descriptions at scale.</p>
+      </li>
+      <li class="log__row" data-nav tabindex="-1">
+        <span class="log__period">2025 spring</span>
+        <span class="log__role">Software Engineer Intern</span>
+        <span class="log__org">Infinitaz</span>
+        <p class="log__note">Built .NET services integrating Azure OpenAI and local models, and automated analytics workflows across distributed VMs.</p>
+      </li>
+      <li class="log__row" data-nav tabindex="-1">
+        <span class="log__period">2024 summer</span>
+        <span class="log__role">Undergraduate Researcher</span>
+        <span class="log__org">UT Dallas</span>
+        <p class="log__note">Researched deep learning for code analysis — RNN-based classification models and adversarial robustness on code representations.</p>
+      </li>
+    </ol>
+  </section>
+
+  <!-- ===================== CONTACT ===================== -->
+  <section id="contact" class="wrap section" aria-labelledby="contact-h">
+    <h2 class="section__title" id="contact-h"><span class="section__num">04</span> contact</h2>
+
+    <p class="contact__lead">Email is the fastest way in.</p>
+
+    <dl class="kv">
+      <dt>status</dt>
+      <dd><span class="dot" aria-hidden="true"></span>open to summer 2027 internships and research</dd>
+
+      <dt>email</dt>
+      <dd>
+        <a href="mailto:troydaviscs@gmail.com">troydaviscs@gmail.com</a>
+        <button class="copy" id="copy-email" type="button" data-copy="troydaviscs@gmail.com">[c] copy</button>
+      </dd>
+
+      <dt>github</dt>
+      <dd><a href="https://github.com/Troydavis06" target="_blank" rel="noopener noreferrer">github.com/Troydavis06</a></dd>
+
+      <dt>linkedin</dt>
+      <dd><a href="https://linkedin.com/in/troydavis06" target="_blank" rel="noopener noreferrer">linkedin.com/in/troydavis06</a></dd>
+    </dl>
+  </section>
+
+</main>
+
+<footer id="end" class="wrap colophon">
+  <p>&copy; 2026 troy davis &middot; set in ibm plex mono &middot; no framework &middot; last updated jul 2026</p>
+</footer>
+
+<div class="statusbar">
+  <span class="statusbar__path" id="status-path">~/</span>
+  <ul class="statusbar__keys" aria-hidden="true">
+    <li><kbd>j/k</kbd>move</li>
+    <li><kbd>enter</kbd>open</li>
+    <li><kbd>t</kbd>theme</li>
+    <li><kbd>c</kbd>email</li>
+    <li><kbd>?</kbd>keys</li>
+  </ul>
+  <div class="statusbar__actions">
+    <button type="button" id="m-theme">theme</button>
+    <button type="button" id="m-email">email</button>
+    <button type="button" id="m-top">top</button>
   </div>
+</div>
 
-  <!-- EXPERIENCE -->
-  <div class="section-wrap" id="experience">
-    <div class="section-inner">
-      <div class="section-header">
-        <span class="section-label">experience</span>
-      </div>
-      <div class="exp-list">
+<dialog class="help" id="help" aria-labelledby="help-h">
+  <h2 id="help-h">keys</h2>
+  <dl class="help__keys">
+    <dt>j / k</dt>      <dd>move down / up</dd>
+    <dt>enter</dt>      <dd>open selected</dd>
+    <dt>g / G</dt>      <dd>top / bottom</dd>
+    <dt>1 &ndash; 4</dt><dd>jump to section</dd>
+    <dt>t</dt>          <dd>toggle theme</dd>
+    <dt>c</dt>          <dd>copy email</dd>
+    <dt>?</dt>          <dd>this list</dd>
+    <dt>esc</dt>        <dd>dismiss</dd>
+  </dl>
+  <button class="help__close" type="button" id="help-close">[esc] close</button>
+</dialog>
 
-        <div class="exp-item">
-          <div class="exp-dot active"></div>
-          <div class="exp-body">
-            <div class="exp-header">
-              <span class="exp-title">Software Engineer Intern &middot; Hewlett Packard Enterprise</span>
-              <span class="exp-year">Summer 2026</span>
-            </div>
-            <p class="exp-desc">Building agentic workflow for vulnerability detection and remediation.</p>
-          </div>
-        </div>
+<p class="visually-hidden" id="sr-status" role="status" aria-live="polite"></p>
 
-        <div class="exp-item">
-          <div class="exp-dot active"></div>
-          <div class="exp-body">
-            <div class="exp-header">
-              <span class="exp-title">Competitive Programming Exam Author &middot; A+ Computer Science</span>
-              <span class="exp-year">Summer 2026</span>
-            </div>
-            <p class="exp-desc">Writing UIL style programming and written exams.</p>
-          </div>
-        </div>
-
-        <div class="exp-item">
-          <div class="exp-dot"></div>
-          <div class="exp-body">
-            <div class="exp-header">
-              <span class="exp-title">Software Engineer Intern &middot; Hewlett Packard Enterprise</span>
-              <span class="exp-year">Summer 2025</span>
-            </div>
-            <p class="exp-desc">Built tooling to automate compliance workflow analysis and generate ML-based control group descriptions at scale.</p>
-          </div>
-        </div>
-
-        <div class="exp-item">
-          <div class="exp-dot"></div>
-          <div class="exp-body">
-            <div class="exp-header">
-              <span class="exp-title">Software Engineer Intern &middot; Infinitaz</span>
-              <span class="exp-year">Spring 2025</span>
-            </div>
-            <p class="exp-desc">Built .NET services integrating Azure OpenAI and local models, and automated analytics workflows across distributed VMs.</p>
-          </div>
-        </div>
-
-        <div class="exp-item">
-          <div class="exp-dot"></div>
-          <div class="exp-body">
-            <div class="exp-header">
-              <span class="exp-title">Undergraduate Researcher &middot; UT Dallas</span>
-              <span class="exp-year">Summer 2024</span>
-            </div>
-            <p class="exp-desc">Researched deep learning for code analysis — RNN-based classification models and adversarial robustness on code representations.</p>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-  <!-- WRITING (temporarily hidden)
-  <div class="section-wrap" id="writing">
-    <div class="section-inner">
-      <div class="section-header">
-        <span class="section-label">writing</span>
-      </div>
-      <div class="writing-list">
-
-        <a href="writing/matching-engine.html" class="writing-item">
-          <span class="writing-title">What I learned building a matching engine from scratch</span>
-          <span class="writing-date">Feb 2026</span>
-        </a>
-
-        <a href="writing/tech-to-quant.html" class="writing-item">
-          <span class="writing-title">Notes on the tech-to-quant pivot</span>
-          <span class="writing-date">Jan 2026</span>
-        </a>
-
-      </div>
-    </div>
-  </div>
-  -->
-
-  <!-- WORK -->
-  <div class="section-wrap" id="work">
-    <div class="section-inner">
-      <div class="section-header">
-        <span class="section-label">selected work</span>
-        <a href="#work" class="section-link">all projects →</a>
-      </div>
-      <div class="work-grid">
-
-        <div class="work-card">
-          <p class="card-tags">agents &middot; multi-tool</p>
-          <h3 class="card-title">CLARA</h3>
-          <p class="card-desc">A multi-agent system built for Hook&rsquo;em Hacks 2026. Aggregates output from multiple code analysis scanners into prioritized, developer-ready findings with remediation insights.</p>
-          <div class="card-links">
-            <a href="https://claragot.us/" target="_blank" rel="noopener noreferrer" class="card-link"><i class="fas fa-globe"></i> website</a>
-            <a href="https://github.com/Troydavis06/CLARA" target="_blank" rel="noopener noreferrer" class="card-link"><i class="fab fa-github"></i> github</a>
-          </div>
-        </div>
-
-        <div class="work-card">
-          <p class="card-tags">web &middot; shipped</p>
-          <h3 class="card-title">InstaCleanser</h3>
-          <p class="card-desc">A browser extension that analyzes Instagram follower/following data in-session, identifies non-followers, and enables safe one-by-one or bulk unfollow workflows — directly from your profile.</p>
-          <div class="card-links">
-            <a href="https://troydavis.me/instacleanser/" target="_blank" rel="noopener noreferrer" class="card-link"><i class="fas fa-globe"></i> website</a>
-            <a href="https://github.com/Troydavis06/InstaCleanser" target="_blank" rel="noopener noreferrer" class="card-link"><i class="fab fa-github"></i> github</a>
-          </div>
-        </div>
-
-        <div class="work-card work-card--muted">
-          <p class="card-tags">more &middot; soon</p>
-          <h3 class="card-title">More coming</h3>
-          <p class="card-desc">Building more things. Check back soon.</p>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-  <!-- CONTACT -->
-  <div class="section-wrap" id="contact">
-    <div class="section-inner">
-      <div class="contact-inner">
-        <h2>Let&rsquo;s build something.</h2>
-        <p>Open to internships, research, and interesting problems. Reach out anytime.</p>
-        <a href="mailto:troydaviscs@gmail.com" class="btn-primary">get in touch &rarr;</a>
-      </div>
-    </div>
-  </div>
-
-  <!-- FOOTER -->
-  <footer class="footer-wrap">
-    <div class="footer-inner">
-      <span class="footer-copy">&copy; 2026 troy davis</span>
-      <div class="footer-links">
-        <a href="https://github.com/troydavis06" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> github</a>
-        <a href="https://linkedin.com/in/troydavis06" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin"></i> linkedin</a>
-        <a href="mailto:troydaviscs@gmail.com"><i class="fas fa-envelope"></i> email</a>
-      </div>
-    </div>
-  </footer>
-
-  <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
-  <script src="js/sphere.js"></script>
-  <script>
-    // Nav border on scroll
-    var nav = document.getElementById('main-nav');
-    window.addEventListener('scroll', function () {
-      nav.classList.toggle('scrolled', window.scrollY > 20);
-    });
-  </script>
-
+<script defer src="js/site.js"></script>
 </body>
 </html>

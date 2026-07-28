@@ -1,6 +1,6 @@
 # troydavis.me
 
-Personal site. Built simple on purpose.
+Personal site. A terminal interface, set on paper.
 
 **Live:** [troydavis.me](https://troydavis.me)
 
@@ -8,18 +8,54 @@ Personal site. Built simple on purpose.
 
 ### Stack
 
-- HTML + CSS, no framework
-- Three.js for the sphere
-- DM Sans, Font Awesome
+- HTML + CSS, no framework, no build step
+- IBM Plex Mono, the only typeface
+- One stylesheet, one script
 - Deployed on Vercel
 
 ### Structure
 
 ```
-index.html        main page
-css/main.css      all styles for the main site
-js/sphere.js      three.js wireframe sphere
-writing/          article pages
-assets/           images, favicon
-instacleanser/    separate hosted site — do not touch
+index.html          the site
+css/main.css        all styles: tokens, both themes, every component
+js/site.js          theme, scroll-spy, clipboard, help dialog, key nav
+writing/            article pages (not linked from the front page yet)
+resume.html         placeholder
+assets/             favicon, touch icon, og card
+albums.html         older page, still reachable by URL
+instacleanser/      separate hosted site — do not touch
+```
+
+### Notes
+
+**Themes.** Light is the primary design; dark is a tuned inversion. An inline
+script in `<head>` resolves localStorage, then system preference, into a
+concrete `data-theme` before first paint — so the CSS carries two color blocks
+and no `prefers-color-scheme` at all. Without JS the site is light and fully
+styled.
+
+**No box-drawing characters.** IBM Plex Mono's latin subset does not cover
+U+2500–257F, so any box-drawing glyph would fall back per-glyph to another font
+with a different advance width and break the character grid it is meant to sit
+on. CSS borders do the structure instead. Same reason `->` is written in ASCII:
+U+2192 isn't in the font either. If you add copy, keep it inside the covered
+ranges.
+
+**The character grid.** `1ch` is exactly `0.6em` here. Anything using `ch`
+tracks must set `font-size` on the grid container rather than on the cells, must
+use a length for `line-height` (a ratio re-multiplies per cell and drifts off
+the baseline), and must never apply `letter-spacing` inside the grid.
+
+**Keyboard navigation** (`j/k`, `enter`, `g/G`, `1`–`4`, `t`, `c`, `?`) is an
+enhancement. Everything it reaches is also reachable by mouse, touch, Tab, and
+a screen reader.
+
+### History
+
+The previous hero was a WebGL "hook 'em horns" hand — a signed distance field
+of smooth-min blended capsules, meshed with marching tetrahedra and rendered as
+a drifting plexus. It never shipped, and it's kept at:
+
+```
+git show sphere-hand-v1:js/sphere.js
 ```
