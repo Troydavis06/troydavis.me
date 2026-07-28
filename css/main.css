@@ -1,506 +1,927 @@
-/* ===== VARIABLES ===== */
+/* ==========================================================================
+   troydavis.me
+   One stylesheet, no build step, no framework.
+   Set in IBM Plex Mono. Light-first; dark is a tuned inversion, not a flip.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. TOKENS — non-color, theme-independent
+   -------------------------------------------------------------------------- */
 :root {
-  --bg:          #0f0f0f;
-  --bg-card:     #161616;
-  --bg-nav:      rgba(15, 15, 15, 0.88);
-  --border:      #222222;
-  --text:        #e8e8e8;
-  --text-muted:  #666666;
-  --accent:      #bf5700;
-  --accent-h:    #d96020;
-  --font:        'DM Sans', sans-serif;
-  --max-w:       1080px;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', 'Cascadia Mono',
+               Menlo, Consolas, 'DejaVu Sans Mono', monospace;
+
+  /* IBM Plex Mono's advance is exactly 0.600em at every weight, so 1ch = 0.6em.
+     Every ch-based track below, and the hero fit formula, assume that. */
+
+  --fs-2xs: 0.75rem;    /* 12 — chrome, micro-labels. HARD FLOOR. */
+  --fs-xs:  0.8125rem;  /* 13 — table cells, metadata */
+  --fs-sm:  0.875rem;   /* 14 — secondary body */
+  --fs-md:  0.9375rem;  /* 15 — body. 15 x 1.6 = 24 exactly */
+  --fs-lg:  1.0625rem;  /* 17 — lead paragraph */
+  --fs-xl:  1.375rem;   /* 22 — section headings */
+  --fs-2xl: clamp(1.5rem, 3.5vw, 2rem);
+
+  /* Mono has a fixed advance, so the largest size that fits N characters is
+     computable exactly — no clamp guesswork, no horizontal scrollbar at any
+     viewport. "TROY DAVIS" is 10 cells (6.0em) and the cursor adds 0.6em + 0.1em of
+     margin, so the true width is 6.7em. 11.4 leaves ~2% slack, which keeps a
+     wider fallback font from bumping the cursor onto its own line. */
+  --hero-chars: 11.4;
+  --fs-hero: min(5.5rem, calc((100vw - 2 * var(--pad-x)) / (var(--hero-chars) * 0.6)));
+
+  --lh-tight: 1.15;
+  --lh-body:  1.6;
+  --line:     1.5rem;   /* 24px, ABSOLUTE — see the note on ch grids below */
+  --track:    0.08em;   /* standalone caps labels ONLY, never inside a ch grid */
+
+  /* Spacing: multiples of the 24px line, plus two sub-line micro steps. */
+  --sp-1: 0.375rem;
+  --sp-2: 0.75rem;
+  --sp-3: 1.5rem;
+  --sp-4: 2.25rem;
+  --sp-5: 3rem;
+  --sp-6: 4.5rem;
+  --sp-7: 6rem;
+
+  --pad-x:    1.5rem;
+  --max-w:    64rem;
+  --measure:  68ch;
+  --bar-h:    2.25rem;
+  --status-h: 1.875rem;
+  --tick:     10px;
+  --radius:   0;        /* TUI: nothing is ever rounded. It stays 0. */
+  --dur:      120ms;
 }
 
-/* ===== RESET ===== */
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+/* --------------------------------------------------------------------------
+   2. TOKENS — color
+   Contrast measured against WCAG 2.x. Ratios in comments are paper / pane.
+   -------------------------------------------------------------------------- */
+:root,
+:root[data-theme='light'] {
+  color-scheme: light;
+  --paper:       #f4f1ea;
+  --pane:        #eae6dd;
+  --pane-sel:    #e0dacd;
+  --ink:         #1a1815;  /* 15.71 / 14.22  AAA */
+  --muted:       #6a635a;  /*  5.25 /  4.76  AA  */
+  --rule:        #d5cec2;  /* decorative only */
+  --rule-strong: #8f8270;  /*  3.33 /  3.01  AA non-text (1.4.11) */
+  --accent:      #a34700;  /*  5.38 /  4.88  AA — text, links, focus ring */
+  --brand:       #bf5700;  /*  4.07 /  3.68  UT orange: LARGE type + marks only */
+  --live:        #3d6647;  /*  5.84 /  5.29  AA */
+  --on-accent:   #f4f1ea;
+}
 
-html { scroll-behavior: smooth; }
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --paper:       #1c1a16;  /* deliberately warm, NOT #0f0f0f */
+  --pane:        #2a2620;
+  --pane-sel:    #332e26;
+  --ink:         #e6e0d4;  /* 13.22 / 11.44  AAA */
+  --muted:       #948b7e;  /*  5.17 /  4.48  AA  */
+  --rule:        #35312a;
+  --rule-strong: #756c5d;  /*  3.36 /  3.17  AA non-text */
+  --accent:      #e07b3c;  /*  5.85 /  5.06  AA — no brand/accent split needed */
+  --brand:       #e07b3c;
+  --live:        #7fae7f;  /*  6.84 /  5.92  AA */
+  --on-accent:   #1c1a16;
+}
+
+/* --------------------------------------------------------------------------
+   3. RESET + BASE
+   -------------------------------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
 
 body {
-  font-family: var(--font);
-  background: var(--bg);
-  color: var(--text);
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
+  font-family: var(--font-mono);
+  font-size: var(--fs-md);
+  line-height: var(--lh-body);
+  background: var(--paper);
+  color: var(--ink);
+  font-synthesis: none;          /* never let the browser fake a weight */
+  font-variant-ligatures: none;  /* protects the fallback stack */
+  /* No -webkit-font-smoothing: antialiased. It thins mono on warm paper into
+     something weak and grey. Correct for a dark-only site; wrong for this one. */
+  padding-top: var(--bar-h);
+  padding-bottom: calc(var(--status-h) + var(--sp-3));
+  overflow-wrap: break-word;
 }
 
 a { color: inherit; text-decoration: none; }
+h1, h2, h3 { font-weight: 600; line-height: var(--lh-tight); }
+ul, ol { list-style: none; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+::selection { background: var(--accent); color: var(--on-accent); }
 
-img { display: block; max-width: 100%; }
-
-/* ===== NAV ===== */
-nav {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1.1rem 2rem;
-  background: var(--bg-nav);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-bottom: 1px solid transparent;
-  transition: border-color 0.3s;
+/* Focus is never removed. 2px at --accent clears 1.4.11's 3:1 in both themes. */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
-nav.scrolled { border-bottom-color: var(--border); }
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  font-weight: 700;
-  font-size: 0.95rem;
-  letter-spacing: -0.01em;
+/* Anchors, Tab, and scrollIntoView must all clear the two fixed bars. */
+[id],
+[data-nav] {
+  scroll-margin-top: calc(var(--bar-h) + var(--sp-2));
+  scroll-margin-bottom: calc(var(--status-h) + var(--sp-3));
 }
 
-.brand-dot {
-  color: var(--accent);
-  font-size: 1.5rem;
-  line-height: 0;
-  position: relative;
-  top: 0.05rem;
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
-.nav-links { display: flex; gap: 2rem; }
-
-.nav-links a {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--text-muted);
-  transition: color 0.2s;
-}
-
-.nav-links a:hover { color: var(--text); }
-
-/* ===== HERO ===== */
-#hero {
-  min-height: 100vh;
-  max-width: var(--max-w);
-  margin: 0 auto;
-  padding: 8rem 2rem 4rem;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: center;
-  gap: 2rem;
-}
-
-.hero-label {
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: 1.1rem;
-}
-
-.hero-text h1 {
-  font-size: clamp(2.4rem, 5vw, 3.8rem);
-  font-weight: 800;
-  line-height: 1.1;
-  letter-spacing: -0.025em;
-  color: var(--text);
-  margin-bottom: 1.1rem;
-}
-
-.hero-sub {
-  font-size: 1rem;
-  color: var(--text-muted);
-  line-height: 1.7;
-  max-width: 400px;
-  margin-bottom: 2rem;
-}
-
-.hero-cta { display: flex; gap: 0.75rem; flex-wrap: wrap; }
-
-.btn-primary {
-  display: inline-block;
+.skip {
+  position: absolute;
+  top: 0; left: 0;
+  z-index: 200;
+  transform: translateY(-120%);
+  padding: var(--sp-2) var(--sp-3);
   background: var(--accent);
-  color: #fff;
-  font-weight: 600;
-  font-size: 0.875rem;
-  padding: 0.65rem 1.4rem;
-  border-radius: 6px;
-  transition: background 0.2s, transform 0.15s;
-}
-
-.btn-primary:hover { background: var(--accent-h); transform: translateY(-1px); }
-
-.btn-secondary {
-  display: inline-block;
-  color: var(--text);
-  font-weight: 600;
-  font-size: 0.875rem;
-  padding: 0.65rem 1.4rem;
-  border-radius: 6px;
-  border: 1px solid var(--border);
-  transition: border-color 0.2s;
-}
-
-.btn-secondary:hover { border-color: #444; }
-
-#sphere-canvas {
-  width: 100%;
-  aspect-ratio: 1;
-  max-width: 460px;
-  justify-self: center;
-}
-
-#sphere-canvas canvas {
-  width: 100% !important;
-  height: 100% !important;
-}
-
-/* ===== SECTION BASE ===== */
-.section-wrap {
-  border-top: 1px solid var(--border);
-  padding: 5rem 2rem;
-}
-
-.section-inner {
-  max-width: var(--max-w);
-  margin: 0 auto;
-}
-
-.section-header {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  margin-bottom: 2.5rem;
-}
-
-.section-label {
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.13em;
+  color: var(--on-accent);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--track);
   text-transform: uppercase;
+}
+.skip:focus { transform: translateY(0); }
+
+.wrap {
+  max-width: var(--max-w);
+  margin-inline: auto;
+  padding-inline: var(--pad-x);
+}
+
+/* --------------------------------------------------------------------------
+   4. CHROME — top bar
+   -------------------------------------------------------------------------- */
+.topbar {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 100;
+  height: var(--bar-h);
+  display: flex;
+  align-items: center;
+  gap: 2ch;
+  padding-inline: var(--pad-x);
+  font-size: var(--fs-2xs);
+  background: var(--pane);
+  border-bottom: 1px solid var(--rule);
+  /* no overflow:hidden — it would clip focus rings on the bar's buttons */
+}
+
+.topbar__brand {
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.topbar__brand:hover { color: var(--accent); }
+.topbar__brand-short { display: none; }
+
+.topbar__path {
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.topbar__nav {
+  margin-left: auto;
+  display: flex;
+  gap: 2ch;
+}
+.topbar__nav a {
+  color: var(--muted);
+  transition: color var(--dur);
+}
+.topbar__nav a:hover,
+.topbar__nav a[aria-current='true'] { color: var(--accent); }
+
+.topbar__theme {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 3ch;
+  color: var(--muted);
+  transition: color var(--dur);
+}
+.topbar__theme:hover { color: var(--accent); }
+
+/* --------------------------------------------------------------------------
+   5. CHROME — status bar
+   -------------------------------------------------------------------------- */
+.statusbar {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: 100;
+  min-height: var(--status-h);
+  display: flex;
+  align-items: center;
+  gap: 3ch;
+  padding-inline: var(--pad-x);
+  font-size: var(--fs-2xs);
+  background: var(--pane);
+  border-top: 1px solid var(--rule);
+  color: var(--muted);
+}
+
+.statusbar__path {
   color: var(--accent);
+  white-space: nowrap;
 }
 
-.section-link {
-  font-size: 0.82rem;
-  color: var(--text-muted);
-  transition: color 0.2s;
+/* Command prompt. A real one: it parses, completes, and reports errors. */
+.prompt {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1ch;
+  flex: 0 1 26ch;
+  min-width: 0;
 }
 
-.section-link:hover { color: var(--text); }
-
-/* ===== WORK ===== */
-.work-grid {
+/* Completion menu, opening upward out of the status bar. */
+.prompt__menu {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + var(--sp-2));
+  left: 0;
+  z-index: 10;
+  min-width: 24ch;
+  /* The prompt sits partway across the bar, so an open menu could otherwise
+     push the document wider than the viewport on a narrow window. */
+  max-width: calc(100vw - 2 * var(--pad-x));
+  max-height: 11rem;
+  overflow-y: auto;
+  padding-block: var(--sp-1);
+  background: var(--pane);
+  border: 1px solid var(--rule-strong);
+}
+.prompt__menu[data-open] { display: block; }
+.prompt__menu li {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-  gap: 1rem;
+  grid-template-columns: 3ch minmax(0, 1fr) max-content;
+  column-gap: 1ch;
+  padding-inline: 1.5ch;
+  color: var(--muted);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.prompt__menu li::before { content: ''; color: var(--accent); }
+.prompt__menu li[data-active] { background: var(--pane-sel); color: var(--ink); }
+.prompt__menu li[data-active]::before { content: '>'; }
+.prompt__menu li:hover { background: var(--pane-sel); color: var(--ink); }
+.prompt__menu .menu__hint { color: var(--muted); }
+.prompt__menu li[data-active] .menu__hint { color: var(--muted); }
+.prompt__sigil { color: var(--accent); }
+.prompt__input {
+  flex: 1;
+  min-width: 0;
+  font: inherit;
+  color: var(--ink);
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 1px;
+  transition: border-color var(--dur);
+}
+.prompt__input::placeholder { color: var(--muted); opacity: 0.65; }
+.prompt__input:focus { border-bottom-color: var(--accent); outline: none; }
+.prompt:focus-within .prompt__sigil { color: var(--brand); }
+
+.statusbar__msg {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--muted);
+}
+.statusbar__msg[data-err] { color: var(--brand); }
+
+.statusbar__keys {
+  display: flex;
+  gap: 2.5ch;
+  margin-left: auto;
+  white-space: nowrap;
 }
 
-.work-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 1.5rem;
+kbd {
+  font: inherit;
+  color: var(--ink);
+  border: 1px solid var(--rule-strong);
+  padding-inline: 0.5ch;
+  margin-right: 0.5ch;
+}
+
+.statusbar__actions {
+  display: none;
+  margin-left: auto;
+  gap: 1ch;
+}
+.statusbar__actions button {
+  color: var(--muted);
+  padding-inline: 1ch;
+}
+
+/* --------------------------------------------------------------------------
+   6. SECTIONS
+   -------------------------------------------------------------------------- */
+/* Bottom padding only. scrollIntoView targets the border box, so any
+   padding-top here becomes dead space above the heading when you jump to a
+   section — and an uneven padding-top makes each section land at a different
+   height. Spacing comes from the preceding block's padding-bottom instead. */
+.section {
+  padding-top: 0;
+  padding-bottom: var(--sp-6);
+}
+
+/* Heading sits on a rule that runs to the end of the measure — the label-on-
+   the-line move that carries most of the TUI read, with zero risky glyphs. */
+.section__title {
+  display: flex;
+  align-items: center;
+  gap: 2ch;
+  font-size: var(--fs-2xs);
+  font-weight: 600;
+  letter-spacing: var(--track);
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: var(--sp-4);
+}
+.section__title::after {
+  content: '';
+  flex: 1;
+  border-top: 1px solid var(--rule);
+}
+.section__num { color: var(--accent); }
+
+/* --------------------------------------------------------------------------
+   7. PRIMITIVE — .kv (aligned key/value block)
+
+   CSS Grid on the <dl>, never space-padding in the HTML: padding needs
+   white-space:pre (which kills reflow), is announced inconsistently by
+   NVDA/VoiceOver/JAWS, lands in the reader's clipboard, and shatters under
+   any font fallback.
+
+   minmax(0, 1fr) on the value track is MANDATORY — a bare 1fr has
+   min-width:auto and one long unbreakable token (an email, a URL) blows the
+   grid past the viewport.
+   -------------------------------------------------------------------------- */
+.kv {
+  display: grid;
+  grid-template-columns: minmax(9ch, max-content) minmax(0, 1fr);
+  column-gap: 2ch;
+  row-gap: 0;
+  font-size: var(--fs-sm);
+  line-height: var(--line);   /* a LENGTH: see §11 */
+  letter-spacing: normal;     /* explicit — ch grids and tracking do not mix */
+}
+.kv > dt { color: var(--muted); }
+.kv > dd { margin: 0; color: var(--ink); overflow-wrap: anywhere; }
+.kv a {
+  color: var(--ink);
+  border-bottom: 1px solid var(--rule-strong);
+  transition: color var(--dur), border-color var(--dur);
+}
+.kv a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+
+/* --------------------------------------------------------------------------
+   8. PRIMITIVE — .pane
+
+   Zero box-drawing characters. IBM Plex Mono's latin subset does not cover
+   U+2500-257F, so every box-drawing glyph would fall back per-glyph to another font
+   with a different advance width — mismatched strokes and a frame that does
+   not align to the ch grid it is meant to be drawn on. Android often has no
+   covering fallback at all and renders tofu.
+
+   CSS borders do the structure. The TUI read comes from the corner ticks, the
+   0 radius, and the label knocked out of the top rule.
+   -------------------------------------------------------------------------- */
+.pane {
+  --surface-behind: var(--paper);
+  position: relative;
+  background: var(--pane);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  padding: var(--sp-4) var(--sp-3) var(--sp-3);
+}
+.pane .pane { --surface-behind: var(--pane); }
+
+/* Four corner ticks: eight 1px gradient slivers on ONE pseudo-element.
+   inset:-1px lays them exactly over the border, so they read as the border
+   brightening at the corners rather than as a second frame.
+   ::after, not ::before — .work uses ::before for its selection caret and the
+   two compose on the featured entry. */
+.pane::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  pointer-events: none;   /* without this it swallows clicks on inner links */
+  background-repeat: no-repeat;
+  background-image:
+    linear-gradient(var(--brand) 0 0), linear-gradient(var(--brand) 0 0),
+    linear-gradient(var(--brand) 0 0), linear-gradient(var(--brand) 0 0),
+    linear-gradient(var(--brand) 0 0), linear-gradient(var(--brand) 0 0),
+    linear-gradient(var(--brand) 0 0), linear-gradient(var(--brand) 0 0);
+  background-size:
+    var(--tick) 1px, 1px var(--tick),
+    var(--tick) 1px, 1px var(--tick),
+    var(--tick) 1px, 1px var(--tick),
+    var(--tick) 1px, 1px var(--tick);
+  background-position:
+    left top,     left top,
+    right top,    right top,
+    left bottom,  left bottom,
+    right bottom, right bottom;
+}
+
+.pane__title {
+  position: absolute;
+  top: 0;
+  left: 2ch;
+  transform: translateY(-50%);
+  background: var(--surface-behind);
+  padding-inline: 1ch;
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--track);
+  color: var(--muted);
+  white-space: nowrap;
+  max-width: calc(100% - 6ch);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* --------------------------------------------------------------------------
+   9. HERO
+   -------------------------------------------------------------------------- */
+.hero {
+  min-height: calc(100svh - var(--bar-h) - var(--status-h));
   display: flex;
   flex-direction: column;
-  transition: border-color 0.2s, transform 0.2s;
+  justify-content: center;
+  padding-block: var(--sp-6);
+}
+@supports not (height: 100svh) {
+  .hero { min-height: calc(100vh - var(--bar-h) - var(--status-h)); }
 }
 
-.work-card:hover { border-color: #333; transform: translateY(-2px); }
-
-.card-tags {
-  font-size: 0.68rem;
+.hero__name {
+  font-size: var(--fs-hero);
   font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  line-height: var(--lh-tight);
+  letter-spacing: normal;  /* any tracking invalidates the fit formula */
+  color: var(--ink);
+}
+
+/* The one blinking cursor on the site. A CSS box, not U+2588 — the block
+   element characters are not in the font either. */
+.cursor {
+  display: inline-block;
+  width: 0.6em;
+  height: 0.85em;
+  margin-left: 0.1em;
+  background: var(--brand);
+  vertical-align: baseline;
+  animation: blink 1.2s steps(1) infinite;
+}
+@keyframes blink { 0%, 50% { opacity: 1; } 50.01%, 100% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .cursor { animation: none; opacity: 1; }
+}
+
+
+.hero__kv { margin-top: var(--sp-5); max-width: 60ch; }
+
+/* --------------------------------------------------------------------------
+   10. PROSE
+   -------------------------------------------------------------------------- */
+.prose { max-width: var(--measure); }
+.prose p { margin-bottom: var(--sp-3); }
+.prose p:last-child { margin-bottom: 0; }
+.prose .lead { font-size: var(--fs-lg); line-height: 1.65; }
+
+/* --------------------------------------------------------------------------
+   11. WORK
+   -------------------------------------------------------------------------- */
+.work-list { display: flex; flex-direction: column; gap: var(--sp-4); }
+
+.work {
+  position: relative;
+  padding: var(--sp-3) 0 var(--sp-3) 2ch;
+  border-top: 1px solid var(--rule);
+}
+/* The caret gutter is reserved in EVERY row, always. Inserting it only on
+   selection would jitter the whole block horizontally — the classic visible
+   bug in hand-rolled TUI layouts. */
+.work::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: var(--sp-3);
   color: var(--accent);
-  margin-bottom: 0.7rem;
+  font-weight: 600;
 }
 
-.card-title {
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 0.5rem;
-  line-height: 1.3;
+.work__head {
+  display: grid;
+  grid-template-columns: max-content minmax(2ch, 1fr) max-content;
+  align-items: baseline;
+  column-gap: 2ch;
+}
+.work__name {
+  font-size: var(--fs-xl);
+  font-weight: 600;
+  color: var(--ink);
+}
+.work__lead {
+  border-bottom: 1px dotted var(--rule-strong);
+  height: 0;
+  align-self: center;
+}
+.work__meta {
+  font-size: var(--fs-xs);
+  color: var(--muted);
+  white-space: nowrap;
+}
+.is-live { color: var(--live); }
+.is-soon { color: var(--brand); }
+
+.work__tagline {
+  margin-top: var(--sp-2);
+  font-size: var(--fs-lg);
+  font-weight: 500;
+  color: var(--accent);
+}
+.work__desc {
+  margin-top: var(--sp-2);
+  max-width: var(--measure);
+  color: var(--ink);
+}
+.work__desc + .work__desc { margin-top: var(--sp-2); }
+
+.work--featured .work__name { font-size: var(--fs-2xl); }
+
+/* The featured entry is the one .pane on the page. Reconcile the two: drop the
+   list rule, and fold the caret gutter into the pane's own padding. */
+.work.pane {
+  border-top: 0;
+  padding: var(--sp-5) var(--sp-3) var(--sp-3) calc(var(--sp-3) + 2ch);
+}
+.work.pane::before { left: var(--sp-3); top: var(--sp-5); }
+
+/* Feature list. "->" is ASCII on purpose: U+2192 is not in the font and would
+   fall back to a glyph with a different advance, breaking the cell grid. */
+.feats {
+  margin-top: var(--sp-3);
+  display: grid;
+  gap: var(--sp-1);
+  font-size: var(--fs-xs);
+  line-height: var(--line);
+  color: var(--muted);
+  max-width: var(--measure);
+}
+.feats li {
+  display: grid;
+  grid-template-columns: 3ch minmax(0, 1fr);
+}
+.feats li::before {
+  content: '->';
+  color: var(--accent);
 }
 
-.card-desc {
-  font-size: 0.875rem;
-  color: var(--text-muted);
-  line-height: 1.65;
-  flex: 1;
+.badge {
+  display: inline-block;
+  margin-top: var(--sp-3);
+  padding: 0 1ch;
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--track);
+  color: var(--brand);
+  border: 1px solid var(--brand);
 }
 
 .card-links {
   display: flex;
-  gap: 1rem;
-  margin-top: 1.25rem;
   flex-wrap: wrap;
+  gap: 2ch;
+  margin-top: var(--sp-2);
+}
+/* 44px touch target absorbed back out of flow so it does not disturb rhythm. */
+.link-tag {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-block: -0.75rem;
+  padding-inline: 0.25ch;
+  font-size: var(--fs-xs);
+  color: var(--muted);
+  transition: color var(--dur);
+}
+.link-tag:hover { color: var(--accent); }
+
+/* --------------------------------------------------------------------------
+   12. LOG (experience)
+
+   line-height here is the absolute --line, not a ratio. A ratio re-multiplies
+   against each child's font-size, so a 13px cell inside a 15px block lands at
+   20.8px and falls off the baseline. A length inherits as the computed 24px
+   regardless. That one substitution is what makes the columns line up.
+   -------------------------------------------------------------------------- */
+.log {
+  font-size: var(--fs-xs);
+  line-height: var(--line);
+  border-top: 1px solid var(--rule);
 }
 
-.card-link {
-  font-size: 0.78rem;
-  font-weight: 500;
-  color: var(--text-muted);
-  border-bottom: 1px solid var(--border);
-  padding-bottom: 1px;
-  transition: color 0.2s, border-color 0.2s;
-}
-
-.card-link:hover { color: var(--text); border-color: #555; }
-
-.work-card--muted {
-  border-style: dashed;
-  opacity: 0.45;
-  pointer-events: none;
-}
-
-/* ===== ABOUT ===== */
-.about-grid {
+.log__row {
   display: grid;
-  grid-template-columns: 1fr 260px;
-  gap: 4rem;
-  align-items: start;
+  grid-template-columns: 2ch 11ch minmax(0, 1fr) minmax(0, 26ch);
+  column-gap: 2ch;
+  align-items: baseline;
+  padding-block: var(--sp-2);
+  border-bottom: 1px solid var(--rule);
 }
-
-.about-bio p {
-  font-size: 1.05rem;
-  color: var(--text);
-  line-height: 1.8;
-  margin-bottom: 0.9rem;
-}
-
-.about-bio p:last-child { margin-bottom: 0; }
-
-.about-bio .lead {
-  font-size: 1.15rem;
-  font-weight: 500;
-}
-
-.skills-box {
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 1.25rem;
-}
-
-.skills-box-label {
-  font-size: 0.68rem;
+.log__row::before {
+  content: '';
+  grid-column: 1;
+  color: var(--accent);
   font-weight: 600;
-  letter-spacing: 0.1em;
+}
+.log__row[data-current]::before { content: '*'; }
+
+.log__period {
+  grid-column: 2;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.log__role { grid-column: 3; color: var(--ink); font-weight: 500; }
+.log__org  { grid-column: 4; color: var(--muted); overflow-wrap: anywhere; }
+.log__note {
+  grid-column: 3 / -1;
+  margin-top: var(--sp-1);
+  color: var(--muted);
+  max-width: 60ch;
+}
+
+/* --------------------------------------------------------------------------
+   13. CONTACT + COLOPHON
+   -------------------------------------------------------------------------- */
+.contact__lead {
+  font-size: var(--fs-lg);
+  margin-bottom: var(--sp-3);
+}
+.copy {
+  margin-left: 2ch;
+  font-size: var(--fs-xs);
+  color: var(--muted);
+  border-bottom: 1px solid var(--rule-strong);
+  transition: color var(--dur), border-color var(--dur);
+}
+.copy:hover { color: var(--accent); border-bottom-color: var(--accent); }
+.copy[data-copied] { color: var(--live); border-bottom-color: var(--live); }
+
+.colophon {
+  padding-block: var(--sp-4);
+  border-top: 1px solid var(--rule);
+  font-size: var(--fs-2xs);
+  color: var(--muted);
+}
+.colophon a {
+  border-bottom: 1px solid var(--rule-strong);
+}
+.colophon a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* --------------------------------------------------------------------------
+   14. SELECTION (the j/k layer) + HELP DIALOG
+
+   [data-selected] is styled to be visually DISTINCT from :focus-visible, so a
+   Tab user can tell which mechanism is driving.
+   -------------------------------------------------------------------------- */
+[data-selected] {
+  background: var(--pane-sel);
+  box-shadow: inset 2px 0 0 var(--accent);
+}
+/* Whole sections are selectable too, but a full-width tinted block is far too
+   heavy — they get the accent gutter mark only. */
+section[data-nav][data-selected] {
+  background: none;
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+/* Sections are focusable containers so that jumping to one (cd, 1-4, g/G, an
+   #anchor) is announced to a screen reader. They must never paint a focus box
+   though: an outline around a whole section hangs the height of the section
+   down the page, and clicking any empty space inside one would light it up.
+   The visible indicator for a section is the [data-selected] gutter mark
+   above, which js/site.js sets only for deliberate keyboard moves. */
+section:focus,
+section:focus-visible,
+footer:focus,
+footer:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+.work[data-selected]::before,
+.log__row[data-selected]::before { content: '>'; }
+
+.help::backdrop { background: rgb(0 0 0 / 0.45); }
+.help {
+  margin: auto;
+  max-width: 34rem;
+  width: calc(100% - 2 * var(--pad-x));
+  padding: var(--sp-4);
+  background: var(--pane);
+  color: var(--ink);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius);
+}
+.help h2 {
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--track);
   text-transform: uppercase;
-  color: var(--text-muted);
-  margin-bottom: 0.85rem;
+  color: var(--muted);
+  margin-bottom: var(--sp-3);
+}
+.help__keys {
+  display: grid;
+  grid-template-columns: minmax(8ch, max-content) minmax(0, 1fr);
+  column-gap: 2ch;
+  row-gap: var(--sp-1);
+  font-size: var(--fs-xs);
+  line-height: var(--line);
+}
+.help__keys dt { color: var(--accent); }
+.help__keys dd { margin: 0; color: var(--muted); }
+.help__close {
+  margin-top: var(--sp-3);
+  font-size: var(--fs-2xs);
+  color: var(--muted);
+  border-bottom: 1px solid var(--rule-strong);
 }
 
-.skills-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-
-.skill-tag {
-  font-size: 0.78rem;
-  font-weight: 500;
-  color: var(--text-muted);
-  background: #1c1c1c;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 0.25rem 0.6rem;
+/* --------------------------------------------------------------------------
+   15. ARTICLE PAGES (resume.html, writing/*)
+   Same tokens, no fixed chrome — so the body padding for the bars is undone.
+   -------------------------------------------------------------------------- */
+.doc {
+  padding-top: var(--sp-5);
+  padding-bottom: var(--sp-7);
 }
 
-/* ===== EXPERIENCE ===== */
-.exp-list { display: flex; flex-direction: column; }
-
-.exp-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  padding: 1.3rem 0;
-  border-bottom: 1px solid var(--border);
+.back-link {
+  display: inline-block;
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--track);
+  color: var(--muted);
+  transition: color var(--dur);
 }
+.back-link:hover { color: var(--accent); }
 
-.exp-item:first-child { border-top: 1px solid var(--border); }
+.article { max-width: var(--measure); margin-inline: auto; }
 
-.exp-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #333;
-  flex-shrink: 0;
-  margin-top: 0.45rem;
+.article__head {
+  margin-block: var(--sp-6) var(--sp-5);
+  padding-bottom: var(--sp-3);
+  border-bottom: 1px solid var(--rule);
 }
-
-.exp-dot.active { background: var(--accent); }
-
-.exp-body { flex: 1; }
-
-.exp-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 1rem;
+.article__label {
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--track);
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: var(--sp-2);
 }
-
-.exp-title {
-  font-size: 0.95rem;
+.article__title {
+  font-size: var(--fs-2xl);
   font-weight: 600;
-  color: var(--text);
+  color: var(--ink);
+}
+.article__meta {
+  margin-top: var(--sp-2);
+  font-size: var(--fs-xs);
+  color: var(--muted);
 }
 
-.exp-year {
-  font-size: 0.82rem;
-  color: var(--text-muted);
-  white-space: nowrap;
-  flex-shrink: 0;
+.article__body p { margin-bottom: var(--sp-3); }
+.article__body h2 {
+  margin-block: var(--sp-5) var(--sp-3);
+  font-size: var(--fs-lg);
+  font-weight: 600;
+  color: var(--ink);
 }
-
-.exp-desc {
-  font-size: 0.86rem;
-  color: var(--text-muted);
-  margin-top: 0.3rem;
-  line-height: 1.55;
+.article__body code {
+  font-size: 0.9em;
+  padding: 0 0.4ch;
+  background: var(--pane);
+  border: 1px solid var(--rule);
+  overflow-wrap: anywhere;
 }
+.article__body em { color: var(--accent); font-style: normal; }
 
-/* ===== WRITING ===== */
-.writing-list { display: flex; flex-direction: column; }
+/* --------------------------------------------------------------------------
+   16. RESPONSIVE
+   rem-based queries so a user's browser font-size setting is respected.
+   -------------------------------------------------------------------------- */
 
-.writing-item {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 1.5rem;
-  padding: 1rem 0;
-  border-bottom: 1px solid var(--border);
-}
-
-.writing-item:first-child { border-top: 1px solid var(--border); }
-
-.writing-title {
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: var(--text);
-  transition: color 0.2s;
-}
-
-.writing-item:hover .writing-title { color: var(--accent); }
-
-.writing-date {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.writing-item--placeholder {
-  opacity: 0.35;
-  pointer-events: none;
-}
-
-/* ===== CONTACT ===== */
-.contact-inner {
-  max-width: 500px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.contact-inner h2 {
-  font-size: clamp(1.8rem, 4vw, 2.6rem);
-  font-weight: 800;
-  letter-spacing: -0.025em;
-  margin-bottom: 0.75rem;
-}
-
-.contact-inner p {
-  font-size: 0.95rem;
-  color: var(--text-muted);
-  margin-bottom: 1.75rem;
-}
-
-/* ===== FOOTER ===== */
-.footer-wrap {
-  border-top: 1px solid var(--border);
-  padding: 1.5rem 2rem;
-}
-
-.footer-inner {
-  max-width: var(--max-w);
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.footer-copy {
-  font-size: 0.78rem;
-  color: var(--text-muted);
-}
-
-.footer-links { display: flex; gap: 1.5rem; align-items: center; }
-
-.footer-links a {
-  font-size: 0.78rem;
-  color: var(--text-muted);
-  transition: color 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-}
-
-.footer-links a:hover { color: var(--text); }
-
-.footer-music {
-  font-size: 0.75rem;
-  color: #444;
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 3px;
-  transition: color 0.2s;
-}
-
-.footer-music:hover { color: var(--text-muted); }
-
-/* ===== RESPONSIVE ===== */
-@media (max-width: 900px) {
-  .about-grid {
-    grid-template-columns: 1fr;
-    gap: 2rem;
+/* Touch: the keyboard hints are noise and cost 30px of a 667px viewport.
+   Keyed to pointer, not width — a 500px desktop window still has a keyboard. */
+@media (hover: none) and (pointer: coarse) {
+  /* Set on :root, not on .statusbar — body's padding-bottom and every
+     scroll-margin-bottom resolve --status-h against the root, so a local
+     override here would silently not reach them. */
+  :root { --status-h: 2.75rem; }
+  /* No physical keyboard: the prompt would only summon the on-screen one. */
+  .prompt, .statusbar__msg { display: none; }
+  .statusbar__keys { display: none; }
+  .statusbar__actions { display: flex; }
+  .statusbar {
+    min-height: var(--status-h);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .statusbar__actions button {
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 
-@media (max-width: 768px) {
-  #hero {
-    grid-template-columns: 1fr;
-    min-height: auto;
-    padding: 7rem 1.25rem 3rem;
-    gap: 3rem;
-  }
-
-  #sphere-canvas {
-    max-width: 260px;
-    margin: 0 auto;
-  }
-
-  .section-wrap { padding: 3.5rem 1.25rem; }
-
-  nav { padding: 1rem 1.25rem; }
-
-  .nav-links { gap: 1.25rem; }
-
-  .footer-wrap { padding: 1.25rem; }
-
-  .footer-inner {
-    flex-direction: column;
-    gap: 0.75rem;
-    text-align: center;
-  }
+/* Narrow but fine-pointer: shed the lowest-priority hints, keep the rest. */
+@media (max-width: 44rem) and (pointer: fine) {
+  .statusbar__keys > :nth-child(n + 3) { display: none; }
+  .statusbar__msg { display: none; }
+  .prompt { flex-basis: 14ch; }
 }
 
-@media (max-width: 480px) {
-  .nav-links { gap: 1rem; }
+@media (max-width: 44rem) {
+  .section { padding-bottom: var(--sp-5); }
+  .topbar__path { display: none; }
+  .topbar__brand-full { display: none; }
+  .topbar__brand-short { display: inline; }
+  .topbar { gap: 1.5ch; }
+  .topbar__nav { gap: 1.5ch; }
 
-  .nav-links a { font-size: 0.8rem; }
-
-  .work-grid { grid-template-columns: 1fr; }
-
-  .exp-header { flex-direction: column; gap: 0.1rem; }
-
-  .writing-item {
-    flex-direction: column;
-    gap: 0.2rem;
+  /* 4 tracks cannot fit in ~44 characters. Stack, period first, which reads
+     as a log timestamp. Four lines of query — precisely because it is grid. */
+  .log__row {
+    grid-template-columns: 2ch minmax(0, 1fr);
+    row-gap: var(--sp-1);
+    padding-block: var(--sp-3);
   }
+  .log__period {
+    grid-column: 2;
+    order: -1;
+    font-size: var(--fs-2xs);
+    letter-spacing: var(--track);
+  }
+  .log__role, .log__org, .log__note { grid-column: 2; }
+
+  .work__head { grid-template-columns: minmax(0, 1fr); row-gap: var(--sp-1); }
+  .work__lead { display: none; }
+  .work__meta { white-space: normal; }
+}
+
+@media (max-width: 30rem) {
+  /* Side borders cost 2x24px of a budget that is not there. Top and bottom
+     rules alone still read as a terminal region. */
+  .pane {
+    margin-inline: calc(var(--pad-x) * -1);
+    border-inline: 0;
+    padding-inline: var(--pad-x);
+  }
+  /* Must be ::after — that is where the corner ticks live. Its inset:-1px
+     would otherwise poke 1px past a full-bleed pane and give the whole
+     document a 1px horizontal scroll. */
+  .pane::after { display: none; }
+  .pane__title { left: var(--pad-x); }
+}
+
+/* --------------------------------------------------------------------------
+   17. PRINT
+   -------------------------------------------------------------------------- */
+@media print {
+  .topbar, .statusbar, .skip, .help, .cursor { display: none !important; }
+  body { padding: 0; background: #fff; color: #000; font-size: 10pt; }
+  .pane { background: none; border-color: #999; }
+  .pane::after { display: none; }
+  a[href^='http']::after { content: ' (' attr(href) ')'; font-size: 8pt; color: #555; }
+  .section { padding-block: 1rem; break-inside: avoid; }
 }

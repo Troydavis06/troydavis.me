@@ -1,29 +1,41 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>What I learned building a matching engine from scratch — Troy Davis</title>
-  <link rel="icon" href="../assets/td-favicon.svg" type="image/svg+xml">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/article.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>What I learned building a matching engine from scratch — Troy Davis</title>
+<meta name="description" content="Notes from building a matching engine in C++: integer price keys, keeping the hot path clean, and pushing concurrency to the edges.">
+<meta name="theme-color" content="#f4f1ea">
+<link rel="icon" href="../assets/td-favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+<script>
+(function () {
+  try {
+    var s = localStorage.getItem('theme');
+    document.documentElement.setAttribute('data-theme',
+      (s === 'light' || s === 'dark') ? s
+      : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+  } catch (e) {}
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/main.css">
 </head>
-<body>
+<body class="doc">
 
-  <nav>
-    <a href="../index.html" class="back-link">&larr; troy davis</a>
-  </nav>
+<div class="wrap">
+  <nav><a href="../index.html" class="back-link">&lt;- troy davis</a></nav>
 
-  <article>
-    <header class="article-header">
-      <p class="article-label">writing</p>
-      <h1>What I learned building a matching engine from scratch</h1>
-      <p class="article-meta">Feb 2026 &middot; 6 min read</p>
+  <article class="article">
+    <header class="article__head">
+      <p class="article__label">writing</p>
+      <h1 class="article__title">What I learned building a matching engine from scratch</h1>
+      <p class="article__meta">Feb 2026 &middot; 6 min read</p>
     </header>
 
-    <div class="article-body">
+    <div class="article__body">
       <p>A matching engine is one of those things that sounds simple until you actually sit down to build one. At its core, it just matches buy and sell orders. Two sides of a book, some price/time priority logic, done. Except it&rsquo;s not done, and the simplicity is a trap.</p>
 
       <p>I built mine in C++ over a few weeks, mostly as a way to force myself to think seriously about data structure choices and concurrency. Here&rsquo;s what stuck.</p>
@@ -38,7 +50,7 @@
 
       <h2>Latency is about the hot path</h2>
 
-      <p>Most of the time, the matching loop is idle. When it isn&rsquo;t, it needs to be fast. The critical path is: receive order &rarr; check top of book &rarr; match or insert &rarr; emit fills. Everything else — logging, risk checks, persistence — needs to be off that path.</p>
+      <p>Most of the time, the matching loop is idle. When it isn&rsquo;t, it needs to be fast. The critical path is: receive order -&gt; check top of book -&gt; match or insert -&gt; emit fills. Everything else — logging, risk checks, persistence — needs to be off that path.</p>
 
       <p>I got a decent speedup just by separating concerns aggressively. The match loop touches nothing it doesn&rsquo;t have to. Side effects queue up and get processed by a separate thread. It&rsquo;s a simple pattern but the discipline required to stick to it is underrated.</p>
 
@@ -54,9 +66,10 @@
 
       <p>I&rsquo;d also add proper benchmarking earlier. I added it late and then had to refactor to make the hot path measurable. Measuring first would have shaped some early decisions differently.</p>
 
-      <p>Overall, building it was worth it. There&rsquo;s something clarifying about working close to the metal on a problem with real performance constraints. Recommended if you want to get a feel for systems-level C++.</p>
+      <p>Overall, building it was worth it. There&rsquo;s something clarifying about working on a problem with real performance constraints. Recommended if you want to get a feel for systems-level C++.</p>
     </div>
   </article>
+</div>
 
 </body>
 </html>
