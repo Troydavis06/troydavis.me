@@ -228,6 +228,16 @@
   var items = [];
   var current = -1;
 
+  // True only while WE are moving focus (j/k, cd, 1-4, g/G). Lets the focusin
+  // handler below tell a deliberate keyboard move from an incidental click.
+  var programmaticFocus = false;
+
+  function focusItem(el) {
+    programmaticFocus = true;
+    el.focus({ preventScroll: true });   // focus events fire synchronously here
+    programmaticFocus = false;
+  }
+
   function refresh() {
     items = Array.prototype.slice.call(document.querySelectorAll(SELECTABLE));
   }
@@ -249,13 +259,20 @@
       ? (delta > 0 ? 0 : items.length - 1)
       : Math.min(items.length - 1, Math.max(0, current + delta));
     var el = items[next];
-    el.focus({ preventScroll: true });   // focusin below calls mark()
+    focusItem(el);                       // focusin below calls mark()
     el.scrollIntoView({ block: 'nearest', behavior: scrollBehavior() });
   }
 
-  // One source of truth: whatever receives focus, by any means, is selected.
   document.addEventListener('focusin', function (e) {
     var el = e.target && e.target.closest ? e.target.closest(SELECTABLE) : null;
+
+    // Sections are focusable containers, so clicking anywhere in one — even
+    // empty space beside the hero — focuses it, and the whole section would
+    // light up from a stray click. A section is marked only when we moved
+    // focus there ourselves. Cards and log rows still track focus normally,
+    // since clicking one of those is deliberate.
+    if (el && el.tagName === 'SECTION' && !programmaticFocus) { mark(null); return; }
+
     mark(el || null);
   });
 
@@ -265,7 +282,7 @@
     // Move focus too, so the jump is announced and Tab resumes from here.
     var hadTabindex = el.hasAttribute('tabindex');
     if (!hadTabindex) el.setAttribute('tabindex', '-1');
-    el.focus({ preventScroll: true });
+    focusItem(el);
     if (!hadTabindex) {
       el.addEventListener('blur', function handler() {
         el.removeAttribute('tabindex');

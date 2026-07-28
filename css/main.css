@@ -725,16 +725,18 @@ section[data-nav][data-selected] {
   box-shadow: inset 3px 0 0 var(--accent);
 }
 
-/* Jumping to a section (cd, 1-4, g/G, an #anchor) focuses it so the move is
-   announced. An outline around a whole section draws a box the height of the
-   entire section, hanging way down the page — so sections and the footer get
-   the same gutter mark instead. Still a clearly visible focus indicator. */
+/* Sections are focusable containers so that jumping to one (cd, 1-4, g/G, an
+   #anchor) is announced to a screen reader. They must never paint a focus box
+   though: an outline around a whole section hangs the height of the section
+   down the page, and clicking any empty space inside one would light it up.
+   The visible indicator for a section is the [data-selected] gutter mark
+   above, which js/site.js sets only for deliberate keyboard moves. */
 section:focus,
 section:focus-visible,
 footer:focus,
 footer:focus-visible {
   outline: none;
-  box-shadow: inset 3px 0 0 var(--accent);
+  box-shadow: none;
 }
 .work[data-selected]::before,
 .log__row[data-selected]::before { content: '>'; }
