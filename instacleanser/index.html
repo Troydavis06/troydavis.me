@@ -3,68 +3,72 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>InstaCleanser — follower tools in your browser</title>
+  <title>InstaCleanser — see who does not follow you back</title>
   <meta
     name="description"
-    content="Chrome extension: compare Instagram followers and following in your browser, see who does not follow back, unfollow on your own profile. Uses your instagram.com session."
+    content="Chrome extension that compares your Instagram followers and following in the tab you are already logged into, shows who does not follow back, and unfollows from your own profile."
   />
   <link rel="canonical" href="https://troydavis.me/instacleanser/" />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="InstaCleanser — follower tools in your browser" />
+  <meta property="og:title" content="InstaCleanser — see who does not follow you back" />
   <meta
     property="og:description"
-    content="See who does not follow you back and manage follows using your Instagram session in Chrome. Side panel, local storage, no separate login."
+    content="Compare Instagram followers and following using your own browser session. Side panel, local storage, no separate login."
   />
   <meta property="og:url" content="https://troydavis.me/instacleanser/" />
   <meta
     property="og:image"
-    content="https://troydavis.me/instacleanser/assets/icMain.png"
+    content="https://troydavis.me/instacleanser/assets/popup-main-dark.png"
   />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="InstaCleanser" />
   <meta
     name="twitter:description"
-    content="Instagram followers / following comparison in your browser. Don’t-follow-back list and careful unfollow on your profile."
+    content="Compare Instagram followers and following in your browser, and unfollow the accounts that do not follow you back."
   />
   <meta
     name="twitter:image"
-    content="https://troydavis.me/instacleanser/assets/icMain.png"
+    content="https://troydavis.me/instacleanser/assets/popup-main-dark.png"
   />
+  <script>
+    // Applied before first paint so the page never renders in the wrong theme.
+    try {
+      var t = localStorage.getItem("instacleanser_theme");
+      if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
+    } catch (e) {}
+  </script>
   <link rel="stylesheet" href="styles.css" />
   <link
     rel="icon"
-    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23f58529'/%3E%3Cstop offset='50%25' stop-color='%23dd2a7b'/%3E%3Cstop offset='100%25' stop-color='%238134af'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='%231a1a24'/%3E%3Cpath fill='url(%23g)' d='M8 22c0-6 4-10 8-10s8 4 8 10H8zm8-12a4 4 0 1 1 0-8 4 4 0 0 1 0 8z'/%3E%3C/svg%3E"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23d81b60'/%3E%3Cpath fill='%23fff' d='M8 22c0-6 4-10 8-10s8 4 8 10H8zm8-12a4 4 0 1 1 0-8 4 4 0 0 1 0 8z'/%3E%3C/svg%3E"
   />
 </head>
 <body>
   <a class="nav-skip" href="#main">Skip to content</a>
   <header class="site-header">
-    <div class="wrap">
+    <div class="wrap-wide">
       <span class="logo">InstaCleanser</span>
       <nav class="header-links" aria-label="Page">
         <a href="#features">Features</a>
-        <a href="#screenshots">Screenshots</a>
         <a href="#install">Install</a>
         <a href="privacy.html">Privacy</a>
         <a href="https://github.com/Troydavis06/InstaCleanser">GitHub</a>
+        <button type="button" id="theme-toggle" class="btn-icon" data-choice="system" title="Theme: system" aria-label="Theme: system">
+          <svg class="i-system" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><rect x="1.7" y="2.7" width="12.6" height="8.6" rx="1.5"/><path d="M5.5 13.8h5"/></svg>
+          <svg class="i-light" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="3.1"/><path d="M8 1.2v1.5M8 13.3v1.5M14.8 8h-1.5M2.7 8H1.2M12.8 3.2l-1.1 1.1M4.3 11.7l-1.1 1.1M12.8 12.8l-1.1-1.1M4.3 4.3L3.2 3.2"/></svg>
+          <svg class="i-dark" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true"><path d="M13.2 9.6A5.7 5.7 0 0 1 6.4 2.8a5.7 5.7 0 1 0 6.8 6.8z"/></svg>
+        </button>
       </nav>
     </div>
   </header>
 
-  <hr class="accent-rule" aria-hidden="true" />
-
   <main id="main">
     <section class="hero">
-      <div class="wrap">
-        <h1>Followers, following, and who does not follow back — in your browser.</h1>
+      <div class="wrap-wide">
+        <h1>See who doesn't follow you back.</h1>
         <p class="hero-lead">
-          InstaCleanser is a Chrome extension that compares your Instagram followers and following
-          <strong class="k">in the same session as a normal instagram.com tab</strong>
-          (your cookies, not a third-party login). On <strong class="k">your</strong> profile you can unfollow one at a
-          time or in bulk; on someone else’s, lists stay read-only so you do not change your following by mistake.
-        </p>
-        <p class="hero-note">
-          Personal project, built for fun — not affiliated with Meta or Instagram.
+          A Chrome extension that compares your Instagram followers and following using the tab you
+          are already logged into. No second account, no third-party login.
         </p>
         <div class="hero-cta">
           <a
@@ -73,152 +77,163 @@
             target="_blank"
             rel="noopener noreferrer"
           >
-            Add to Chrome — Web Store
+            Add to Chrome
           </a>
-          <a class="btn btn-secondary" href="https://github.com/Troydavis06/InstaCleanser">Source &amp; README</a>
+          <a class="link-plain" href="https://github.com/Troydavis06/InstaCleanser">Source and README</a>
         </div>
       </div>
     </section>
 
     <section class="section" id="features" aria-labelledby="features-heading">
-      <div class="wrap">
+      <div class="wrap-wide">
         <h2 id="features-heading">What it does</h2>
         <p class="section-intro">
-          Everything runs against the active Instagram tab while you stay logged in. Large accounts take a while to analyze.
+          Everything runs against the Instagram tab you have open. Large accounts take a while.
         </p>
-        <div class="cards">
-          <article class="card">
-            <h3>In-page analysis</h3>
+        <div class="features">
+          <div>
+            <h3>Runs in the page</h3>
             <p>
-              Fetches run in the page context with your session. Keep instagram.com open and logged in in the tab you use for a run.
+              Requests go out from your open Instagram tab with your own session, the same way the
+              site makes them.
             </p>
-          </article>
-          <article class="card">
-            <h3>Followers, following, no follow-back</h3>
+          </div>
+          <div>
+            <h3>Three lists after every run</h3>
             <p>
-              After a run you get stats and three tabs: Followers, Following, and people you follow who do not follow you back.
+              Followers, following, and the accounts you follow who do not follow you back.
             </p>
-          </article>
-          <article class="card">
+          </div>
+          <div>
             <h3>Read-only on other profiles</h3>
             <p>
-              Analyze another username for curiosity; unfollow controls stay off so you cannot unfollow from their profile view.
+              Unfollow controls only appear on your own profile, so someone else's list cannot be
+              changed by accident.
             </p>
-          </article>
-          <article class="card">
-            <h3>Side panel &amp; local cache</h3>
+          </div>
+          <div>
+            <h3>Docks to the side panel</h3>
             <p>
-              Chrome 114+ can dock the UI in the side panel while you switch tabs. Your last successful run lives in
-              <code>chrome.storage</code> and comes back when you reopen the popup or panel.
+              On Chrome 114 and later the interface stays open while you move between tabs. Your
+              last run is cached on your device and comes back when you reopen it.
             </p>
-          </article>
+          </div>
         </div>
       </div>
     </section>
 
-    <section class="section" id="screenshots" aria-labelledby="shots-heading">
-      <div class="wrap">
-        <h2 id="shots-heading">Screenshots</h2>
-        <p class="section-intro">Real UI from the extension — dark layout with the same accent gradient as the toolbar UI.</p>
-        <div class="shots">
-          <figure class="figure-card">
-            <div class="figure-card__media">
-              <img
-                src="assets/icMain.png"
-                alt="InstaCleanser main view: stats, Followers tab selected, scrollable account list"
-                width="480"
-                loading="lazy"
-                decoding="async"
-              />
+    <section class="section" id="screens" aria-labelledby="screens-heading">
+      <div class="wrap-wide">
+        <h2 id="screens-heading">The interface</h2>
+        <p class="section-intro">
+          Counts sit in the tab strip, the list starts immediately below it, and unfollow controls
+          appear only where they apply.
+        </p>
+        <div class="replica-row">
+          <!-- Markup, not a screenshot: it reads this page's tokens, so it
+               follows the site theme and can never fall out of date. -->
+          <div class="replica" role="img" aria-label="The InstaCleanser popup showing the No follow-back tab: 22 accounts, each with an Unfollow button, and an Unfollow all control.">
+            <div class="replica-hdr">
+              <span class="replica-mark">InstaCleanser</span>
+              <span class="replica-ghost">Side panel</span>
             </div>
-            <figcaption>
-              Main view after a run: stats, <strong class="k">Followers</strong> / <strong class="k">Following</strong> /
-              <strong class="k">Don’t follow back</strong> tabs and lists. Following uses the same list layout.
-            </figcaption>
-          </figure>
-          <figure class="figure-card">
-            <div class="figure-card__media">
-              <img
-                src="assets/icNFB.png"
-                alt="InstaCleanser Don’t follow back tab with unfollow and Unfollow all controls"
-                width="480"
-                loading="lazy"
-                decoding="async"
-              />
+            <div class="replica-tabs" aria-hidden="true">
+              <div class="replica-tab"><span>Followers</span><span>389</span></div>
+              <div class="replica-tab"><span>Following</span><span>373</span></div>
+              <div class="replica-tab on"><span>No follow-back</span><span>22</span></div>
             </div>
-            <figcaption>
-              On your own profile, the Don’t follow back tab lists accounts you follow that do not follow back, with
-              <strong class="k">Unfollow</strong> and <strong class="k">Unfollow all</strong>.
-            </figcaption>
-          </figure>
+            <ul aria-hidden="true">
+              <li><span>@fetii</span><span class="replica-unfollow">Unfollow</span></li>
+              <li><span>@freetailhackers</span><span class="replica-unfollow">Unfollow</span></li>
+              <li><span>@hpecareers</span><span class="replica-unfollow">Unfollow</span></li>
+              <li><span>@jarritosusa</span><span class="replica-unfollow">Unfollow</span></li>
+              <li><span>@lockheedmartin</span><span class="replica-unfollow">Unfollow</span></li>
+            </ul>
+            <p class="replica-status" aria-hidden="true">22 accounts · last run 2:14 PM</p>
+          </div>
+          <p class="replica-caption">
+            The popup follows your system theme, and carries a toggle if you want to override it.
+          </p>
         </div>
       </div>
     </section>
 
     <section class="section" id="install" aria-labelledby="install-heading">
-      <div class="wrap">
-        <h2 id="install-heading">Requirements &amp; install</h2>
+      <div class="wrap-wide">
+        <h2 id="install-heading">Requirements and install</h2>
         <p class="section-intro">
-          Use <strong class="k">Google Chrome</strong> or <strong class="k">Microsoft Edge</strong> (Chromium),
-          <strong class="k">114+</strong> if you want the optional side panel.
+          Chrome or Edge on Chromium. Version 114 or later if you want the side panel.
         </p>
-        <div class="card card--narrow">
-          <h3>Chrome Web Store</h3>
-          <p class="install-store-lead">
-            Install from the
-            <a
-              href="https://chromewebstore.google.com/detail/ecphalengelfdcnhallaepjbjgbcbnbb"
-              target="_blank"
-              rel="noopener noreferrer"
-              >InstaCleanser listing</a>
-            (same extension as below; updates arrive automatically).
-          </p>
+        <div class="stack">
+          <div>
+            <h3>From the Chrome Web Store</h3>
+            <p>
+              Install from the
+              <a
+                href="https://chromewebstore.google.com/detail/ecphalengelfdcnhallaepjbjgbcbnbb"
+                target="_blank"
+                rel="noopener noreferrer"
+                >InstaCleanser listing</a>. It is the same extension as below, and updates arrive
+              automatically.
+            </p>
+          </div>
+          <div>
+            <h3>As an unpacked developer build</h3>
+            <ol class="steps">
+              <li>Clone or download the <a href="https://github.com/Troydavis06/InstaCleanser">repository</a>.</li>
+              <li>Open <code>chrome://extensions</code>, or <code>edge://extensions</code> on Edge.</li>
+              <li>Turn on <strong>Developer mode</strong>.</li>
+              <li>Choose <strong>Load unpacked</strong> and pick the repo root, the folder holding <code>manifest.json</code>.</li>
+            </ol>
+          </div>
+          <div>
+            <h3>Running it</h3>
+            <p>
+              Open Instagram in a normal tab and log in. Click the InstaCleanser icon, enter a
+              username, and choose <strong>Run analysis</strong>. Use <strong>Side panel</strong> if
+              you want the interface to stay open when you click away.
+            </p>
+          </div>
         </div>
-        <div class="card card--narrow">
-          <h3>Developer / unpacked install</h3>
-          <ol class="install-steps">
-            <li>Clone or download the <a href="https://github.com/Troydavis06/InstaCleanser">repository</a>.</li>
-            <li>Open <code>chrome://extensions</code> (Chrome) or <code>edge://extensions</code> (Edge).</li>
-            <li>Enable <strong class="k">Developer mode</strong>.</li>
-            <li>
-              Click <strong class="k">Load unpacked</strong> and choose the repo root (the folder that contains
-              <code>manifest.json</code>).
-            </li>
-          </ol>
-        </div>
-        <p class="section-intro section-intro--follow">
-          <strong class="k">Usage:</strong> open Instagram in a normal tab and log in, click the InstaCleanser icon, enter a
-          username (yours or someone else’s), then <strong class="k">Run analysis</strong>. Use
-          <strong class="k">Side panel</strong> if you want the UI to stay open when you click away from the popup.
-        </p>
       </div>
     </section>
 
     <section class="section" aria-labelledby="perms-heading">
-      <div class="wrap">
-        <h2 id="perms-heading">Permissions (short)</h2>
-        <ul class="install-steps list-disc">
-          <li><strong class="k">instagram.com</strong> — fetches in the page context with your session.</li>
-          <li>
-            <strong class="k">activeTab</strong>, <strong class="k">scripting</strong> — inject analysis and unfollow on the
-            active Instagram tab.
-          </li>
-          <li><strong class="k">storage</strong> — cache last run and UI state.</li>
-          <li><strong class="k">sidePanel</strong> — optional docked panel.</li>
-        </ul>
+      <div class="wrap-wide">
+        <h2 id="perms-heading">Permissions</h2>
+        <div class="features">
+          <div>
+            <h3>instagram.com</h3>
+            <p>Runs fetches in the page context using your session.</p>
+          </div>
+          <div>
+            <h3>activeTab and scripting</h3>
+            <p>Injects the analysis and unfollow code into the active Instagram tab.</p>
+          </div>
+          <div>
+            <h3>storage</h3>
+            <p>Caches your last run and interface state on your device.</p>
+          </div>
+          <div>
+            <h3>sidePanel</h3>
+            <p>Powers the optional docked panel.</p>
+          </div>
+        </div>
       </div>
     </section>
 
     <section class="section" aria-labelledby="disclaimer-heading">
-      <div class="wrap">
+      <div class="wrap-wide">
         <h2 id="disclaimer-heading">Disclaimer</h2>
         <div class="disclaimer">
           <p>
-            Instagram does not offer a public API for this workflow. The extension uses the same undocumented endpoints the
-            website uses; behavior may change. Use unfollow features responsibly and at your own risk.
+            Instagram has no public API for this workflow, so the extension calls the same
+            undocumented endpoints the website uses. That behaviour can change without notice. Use
+            the unfollow features responsibly and at your own risk.
           </p>
           <p>
-            <strong>Instagram limits unfollow requests.</strong> If you see a 400 error, wait before trying again.
+            Instagram also rate-limits unfollow requests. If you see a 400 error, wait before trying
+            again.
           </p>
         </div>
       </div>
@@ -226,7 +241,7 @@
   </main>
 
   <footer class="site-footer">
-    <div class="wrap">
+    <div class="wrap-wide">
       <p>
         <a href="https://github.com/Troydavis06/InstaCleanser">GitHub</a>
         ·
@@ -234,8 +249,10 @@
         ·
         <a href="https://github.com/Troydavis06/InstaCleanser/blob/main/LICENSE">License</a>
       </p>
-      <p>InstaCleanser is not affiliated with Meta Platforms, Inc. or Instagram.</p>
+      <p>A personal project, built for fun. Not affiliated with Meta Platforms, Inc. or Instagram.</p>
     </div>
   </footer>
+
+  <script src="theme.js" defer></script>
 </body>
 </html>
