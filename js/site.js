@@ -400,6 +400,7 @@
   var PROJECTS = {
     waypoint: 'https://github.com/Troydavis06',
     clara: 'https://claragot.us/',
+    linkswipe: 'https://github.com/Troydavis06/LinkSwipe',
     instacleanser: 'https://troydavis.me/instacleanser/'
   };
 

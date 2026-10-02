@@ -258,7 +258,7 @@ type('c');
 check('verb position lists cd + clear', names().join(',') === 'cd,clear', names().join(','));
 
 type('open ');
-check('"open " lists projects', names().join(',') === 'waypoint,clara,instacleanser', names().join(','));
+check('"open " lists projects', names().join(',') === 'waypoint,clara,linkswipe,instacleanser', names().join(','));
 
 type('');
 check('empty input closes the menu', menu.getAttribute('data-open') === null);
